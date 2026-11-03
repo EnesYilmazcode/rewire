@@ -17,16 +17,20 @@ for m, c in t.items():
         rows.append((NAMES[m], 100 * word / (word + rand), word, word + rand))
 rows.sort(key=lambda r: -r[1])
 
+LAB_COLOR = {"Claude": "#D97757", "GPT": "#111111", "Gemini": "#4285F4"}  # Anthropic orange, OpenAI black, Google blue
+
+
+def lab_color(name):
+    return next(c for k, c in LAB_COLOR.items() if name.startswith(k))
+
 fig = plt.figure(figsize=(11.7, 6.6), facecolor="white")
 fig.text(0.04, 0.88, "When AIs guessed wrong, they often saw words", fontsize=26, weight="bold")
 fig.text(0.04, 0.82, "The hidden codes were random letters like XPQH. Guesses included MAZE, DUEL and IONS.",
          fontsize=14, color="#444")
 ax = fig.add_axes([0.06, 0.2, 0.9, 0.52])
-bars = ax.bar(range(len(rows)), [r[1] for r in rows], 0.6, color="#a83f34")
+bars = ax.bar(range(len(rows)), [r[1] for r in rows], 0.6, color=[lab_color(r[0]) for r in rows])
 for b, r in zip(bars, rows):
-    ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 7, f"{r[1]:.0f}%", ha="center", fontsize=20, weight="bold")
-    ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 2, f"{r[2]} of {r[3]} wrong guesses", ha="center", fontsize=10, color="#666")
-ax.axhline(1, color="#555", ls="--", lw=1)
+    ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 2, f"{r[1]:.0f}%", ha="center", fontsize=20, weight="bold")
 ax.set_xticks(range(len(rows)), [r[0] for r in rows], fontsize=13)
 ax.tick_params(axis="x", length=0, pad=8)
 ax.set_ylim(0, 85)

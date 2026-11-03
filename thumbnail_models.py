@@ -18,10 +18,16 @@ for m in sorted({r["reader"] for r in R}):
     rows.append((NAMES[m.split("/")[-1]], 100 * np.mean(v), len(v)))
 rows.sort(key=lambda r: -r[1])
 
+LAB_COLOR = {"Claude": "#D97757", "GPT": "#111111", "Gemini": "#4285F4"}  # Anthropic orange, OpenAI black, Google blue
+
+
+def lab_color(name):
+    return next(c for k, c in LAB_COLOR.items() if name.startswith(k))
+
 fig = plt.figure(figsize=(11.7, 6.6), facecolor="white")
 fig.text(0.04, 0.88, "How often each AI found a secret code another AI hid", fontsize=26, weight="bold")
 ax = fig.add_axes([0.06, 0.2, 0.9, 0.58])
-bars = ax.bar(range(len(rows)), [r[1] for r in rows], 0.6, color="#a83f34")
+bars = ax.bar(range(len(rows)), [r[1] for r in rows], 0.6, color=[lab_color(r[0]) for r in rows])
 for b, r in zip(bars, rows):
     ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 2, f"{r[1]:.0f}%", ha="center", fontsize=20, weight="bold")
 ax.set_xticks(range(len(rows)), [r[0] for r in rows], fontsize=13)
