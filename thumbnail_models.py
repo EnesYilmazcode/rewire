@@ -32,8 +32,5 @@ for s in ("top", "right", "left"):
 ax.spines["bottom"].set_color("#ccc")
 ax.tick_params(axis="x", length=0, pad=8)
 n = min(r[2] for r in rows), max(r[2] for r in rows)
-fig.text(0.04, 0.05, f"Codes hidden by the other models, no agreed method. {n[0]} to {n[1]} tries per model.",
-         fontsize=10, color="#666")
-fig.text(0.96, 0.05, "github.com/EnesYilmazcode/rewire", fontsize=10, color="#666", ha="right")
 fig.savefig("figures/thumbnail_models.png", dpi=110)
 print(rows)

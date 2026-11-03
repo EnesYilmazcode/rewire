@@ -34,7 +34,5 @@ ax.set_yticks([])
 for s in ("top", "right", "left"):
     ax.spines[s].set_visible(False)
 ax.spines["bottom"].set_color("#ccc")
-fig.text(0.04, 0.05, "Wrong guesses only. Dashed line: chance (about 1%). Gemini 4 Argon never guessed wrong.", fontsize=10, color="#666")
-fig.text(0.96, 0.05, "github.com/EnesYilmazcode/rewire", fontsize=10, color="#666", ha="right")
 fig.savefig("figures/5_word_bias.png", dpi=110)
 print(rows)

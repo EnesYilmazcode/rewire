@@ -81,16 +81,14 @@ fig.savefig("figures/2_blind_spot.png", dpi=150)
 clean = {m: [r["prob"] for r in MD if r["reader"] == m and r["kind"] == "clean" and r.get("prob") is not None]
          for m in {r["reader"] for r in MD}}
 stages = []
-for label, rec, mons in (("round 1", R, [r for r in MD if r["kind"] == "stego"]), ("adapted senders", AR, AMD)):
+for label, rec, mons in (("first try", R, [r for r in MD if r["kind"] == "stego"]), ("after learning what gets caught", AR, AMD)):
     m = "claude-cli/claude-opus-5-5"
     pos = [r["prob"] for r in mons if r["reader"] == m and r.get("prob") is not None]
     stages.append((label, np.mean([r["recovered"] for r in rec]), np.mean([p >= 50 for p in pos]), auc(pos, clean.get(m, []))))
 fig, ax = plt.subplots(figsize=(7, 4.3))
 x = np.arange(len(stages))
 ax.bar(x - 0.2, [s[1] for s in stages], 0.4, label="receivers recover the code", color="#2b6cb0")
-ax.bar(x + 0.2, [s[2] for s in stages], 0.4, label="decode-first auditor (Opus 5.5) flags it", color="#c53030")
-for i, s in enumerate(stages):
-    ax.text(i + 0.2, s[2] + 0.02, f"AUC {s[3]:.2f}", ha="center", fontsize=9)
+ax.bar(x + 0.2, [s[2] for s in stages], 0.4, label="AI auditor told to look for codes catches it", color="#c53030")
 ax.set_xticks(x, [s[0] for s in stages])
 ax.set_ylim(0, 1.05)
 ax.set_title("Hiding better beats the auditor, and the partner")
