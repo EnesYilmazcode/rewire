@@ -62,3 +62,23 @@ Infra notes: Modal accounts are all disabled. GCE has 1 GPU of quota (L4s were s
 us-west1-b). Vertex has 8 spot A100s per region in us-central1, europe-west4, asia-southeast1, but spot CPU quota is
 42 per region, so 3x A100-40GB per region at most. The first Vertex and L4 runs died on library versions (image
 ships torch 2.4; transformers 5.x needs 2.6+; old jinja2; broken torchaudio).
+
+## 2026-11-03 00:45
+
+**Part 1, arithmetic repeats (3 runs each, fresh boards, 32 neurons):** Opus 5.5 100/100/100, Fable 5.1 ~99,
+Astra 94, Opus 4.5 93, GPT-6 Sol 99 (3 dec) but 72 at 1 dec, GPT-5.6 Sol 79 (100, 58), Gemini 3.1 Pro 67
+(98, 60, 44: very noisy), Sonnet 4.5 24, Gemini 4 Argon 5. Some Codex third runs returned no JSON.
+**This weakens "reading needs perfect arithmetic":** Gemini 3.1 Pro reads 7/8 shapes with shaky arithmetic, and
+Opus 5.5 reads 3/8 with perfect arithmetic. Reading hidden rules looks closer to pattern spotting (which cells
+move together) than exact computation; only the weakest models (Argon, Sonnet) fail both. Shapes was one run per
+model, so it is being repeated twice more before any conclusion.
+
+**Part 2, Qwen3.5-4B steering sweep (avg direction, layers 2-26, pushes 2/4/8% of hidden size): no effect.**
+Baseline test mean 0.553. Best steered config 0.558 (layer 18, 2%) vs its random control 0.546, inside noise
+(150 questions per level, so about +/-4 points). Bigger pushes slightly hurt. Running now: stronger pushes
+(-32 to +64%, negative should hurt if the direction matters) with one shared direction, then one direction per
+question type.
+
+**Process fix:** the earlier Vertex and L4 runs crashed on setup and Vertex reported SUCCEEDED (`| tee` hid the
+exit code). Jobs now use `set -o pipefail`, and a self-check runs every 30 minutes (verify real output, fix,
+relaunch, log).

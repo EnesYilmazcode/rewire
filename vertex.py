@@ -21,7 +21,7 @@ JOBS = [  # (model, region, A100 count)
     ("Qwen/Qwen3.5-27B", "europe-west4", 2),
     ("Qwen/Qwen3.5-35B-A3B", "asia-southeast1", 2),  # spot CPU quota is 42 per region: 4 GPUs needs 48
 ]
-ARGS = "--train 150 --test 150 --scales 2 4 8"
+ARGS = "--train 150 --test 150 --mode level --scales -32 -16 16 32 64"
 STATE = "results/steer/vertex_jobs.json"
 
 
@@ -49,8 +49,8 @@ def submit():
         if tag in jobs:
             continue
         out = f"/gcs/{BUCKET}/rewire/out"
-        script = (f"set -x; mkdir -p {out} /w && cp /gcs/{BUCKET}/rewire/code/*.py /w/ && cd /w && "
-                  f"pip install -q -U 'torch>=2.6' --index-url https://download.pytorch.org/whl/cu124 && "
+        script = (f"set -xo pipefail; mkdir -p {out} /w && cp /gcs/{BUCKET}/rewire/code/*.py /w/ && cd /w && "
+                  f"pip install -q -U 'torch>=2.6' --index-url https://download.pytorch.org/whl/cu124 && pip uninstall -y -q torchvision torchaudio; "
                   f"pip install -q -U transformers accelerate flash-linear-attention 'jinja2>=3.1' && nvidia-smi && "  # image ships torch 2.4
                   f"OUT={out} python steer.py --model {model} {ARGS} 2>&1 | tee {out}/{tag}.log")
         body = {

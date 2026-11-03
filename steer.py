@@ -88,6 +88,8 @@ if __name__ == "__main__":
     p.add_argument("--scales", type=float, nargs="*", default=[2, 4, 8])
     p.add_argument("--model", default=MODEL)
     p.add_argument("--batch", type=int, default=8)
+    p.add_argument("--mode", choices=["avg", "level"], default="avg",
+                   help="avg: one direction for all levels; level: each level steered by its own direction")
     a = p.parse_args()
     MODEL = a.model
     t0 = time.time()
@@ -97,7 +99,7 @@ if __name__ == "__main__":
     test = {lv: items(lv, a.test, "test") for lv in LEVELS}
     results = {"model": MODEL, "train": a.train, "test": a.test}
 
-    base, diffs, norms = {}, [], []
+    base, diffs, norms, per_level = {}, [], [], {}
     for lv in LEVELS:
         c, H = run(tok, model, train[lv], want_hidden=True)
         c = torch.tensor(c, dtype=torch.bool)
@@ -105,6 +107,7 @@ if __name__ == "__main__":
                     "chance": round(1 / len(train[lv][0][1]), 3)}
         if 5 <= c.sum() <= len(c) - 5:  # need both right and wrong answers to compare
             diffs.append(H[c].mean(0) - H[~c].mean(0))  # (L, D)
+            per_level[lv] = diffs[-1] / diffs[-1].norm(dim=-1, keepdim=True)
         norms.append(H.norm(dim=-1).mean(0))  # typical hidden-state size per layer
         print(f"{lv:5s} train {base[lv]['train_acc']:.2f} test {base[lv]['test_acc']:.2f} "
               f"(chance {base[lv]['chance']:.2f})  {time.time() - t0:.0f}s", flush=True)
@@ -121,13 +124,20 @@ if __name__ == "__main__":
         rnd = rnd / rnd.norm()
         for scale in a.scales:
             row = {"layer": layer, "scale": scale}
-            for name, d in (("steer", direction[layer]), ("random", rnd)):
-                vec = d * size[layer] * scale / 100  # scale is % of the typical hidden-state size
-                h = push(model, layer, vec)
-                try:
-                    row[name] = {lv: acc(run(tok, model, test[lv])[0]) for lv in LEVELS}
-                finally:
-                    h.remove()
+            for name in ("steer", "random"):
+                row[name] = {}
+                for lv in LEVELS:
+                    if name == "random":
+                        d = rnd
+                    elif a.mode == "level":
+                        d = per_level.get(lv, direction)[layer]
+                    else:
+                        d = direction[layer]
+                    h = push(model, layer, d * size[layer] * scale / 100)  # scale is % of the typical hidden-state size
+                    try:
+                        row[name][lv] = acc(run(tok, model, test[lv])[0])
+                    finally:
+                        h.remove()
             row["steer_mean"] = round(sum(row["steer"].values()) / len(LEVELS), 3)
             row["random_mean"] = round(sum(row["random"].values()) / len(LEVELS), 3)
             sweep.append(row)
@@ -138,5 +148,6 @@ if __name__ == "__main__":
     os.makedirs("results/steer", exist_ok=True)
     out_dir = os.environ.get("OUT", "results/steer")
     os.makedirs(out_dir, exist_ok=True)
-    json.dump(results, open(f"{out_dir}/{MODEL.split('/')[-1].lower()}.json", "w"), indent=1)
+    results["mode"] = a.mode
+    json.dump(results, open(f"{out_dir}/{MODEL.split('/')[-1].lower()}_{a.mode}.json", "w"), indent=1)
     print("baseline test mean", results["base_test_mean"])
