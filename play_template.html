@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Play the brain</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #fafaf7; color: #222; display: flex; flex-direction: column;
+         align-items: center; margin: 0; padding: 40px 16px; }
+  h1 { font-size: 20px; font-weight: 600; margin: 0 0 6px; }
+  p.sub { color: #777; font-size: 14px; margin: 0 0 24px; text-align: center; max-width: 420px; }
+  #board { display: grid; grid-template-columns: repeat(3, 110px); gap: 6px; }
+  .cell { width: 110px; height: 110px; background: #fff; border: 1px solid #ddd; border-radius: 10px; font-size: 56px;
+          display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+  .cell.taken { cursor: default; }
+  .cell .score { position: absolute; bottom: 6px; right: 8px; font-size: 11px; color: #999; }
+  .X { color: #c0392b; } .O { color: #2c6fbb; }
+  #status { margin: 20px 0 12px; font-size: 16px; min-height: 22px; }
+  button { font: inherit; padding: 8px 16px; border: 1px solid #ccc; background: #fff; border-radius: 8px; cursor: pointer; margin: 0 4px; }
+  label { font-size: 13px; color: #666; margin-top: 16px; }
+  #tally { font-size: 13px; color: #888; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h1>Play the brain</h1>
+<p class="sub">A 32-neuron network, 1,193 numbers, no search and no rules beyond "don't play on a taken square".
+  It just multiplies the board through its weights and picks the highest score.</p>
+<div id="board"></div>
+<div id="status"></div>
+<div>
+  <button onclick="start(1)">New game, I'm X</button>
+  <button onclick="start(2)">New game, I'm O</button>
+</div>
+<label><input type="checkbox" id="show" onchange="render()"> show the brain's score for each square</label>
+<div id="tally"></div>
+<script>
+const B = __BRAIN__;
+const LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+let board, human, over, scores = null, tally = { you: 0, brain: 0, draw: 0 };
+
+const toMove = b => b.filter(v => v === 1).length === b.filter(v => v === 2).length ? 1 : 2;
+const winner = b => { for (const [a, c, d] of LINES) if (b[a] && b[a] === b[c] && b[a] === b[d]) return b[a]; return 0; };
+
+function think(b) {
+  const me = toMove(b);
+  const x = [...b.map(v => +(v === me)), ...b.map(v => +(v !== 0 && v !== me)), ...b.map(v => +(v === 0))];
+  const h = B.W1.map((row, j) => Math.max(0, row.reduce((s, w, i) => s + w * x[i], B.b1[j])));
+  return B.W2.map((row, k) => row.reduce((s, w, j) => s + w * h[j], B.b2[k]));
+}
+
+function brainMove() {
+  const s = think(board);
+  let best = -1;
+  board.forEach((v, i) => { if (!v && (best < 0 || s[i] > s[best])) best = i; });
+  board[best] = toMove(board);
+  finish();
+}
+
+function finish() {
+  const w = winner(board), full = board.every(v => v);
+  if (w || full) {
+    over = true;
+    const key = !w ? "draw" : w === human ? "you" : "brain";
+    tally[key]++;
+    status(!w ? "Draw." : w === human ? "You won. (That shouldn't happen.)" : "The brain won.");
+  } else if (toMove(board) !== human) {
+    setTimeout(brainMove, 350);
+    status("Brain is thinking...");
+  } else status("Your move.");
+  scores = !over && toMove(board) === human ? think(board) : null;
+  render();
+}
+
+function status(t) { document.getElementById("status").textContent = t; }
+
+function render() {
+  const el = document.getElementById("board"), show = document.getElementById("show").checked;
+  el.innerHTML = "";
+  board.forEach((v, i) => {
+    const c = document.createElement("div");
+    c.className = "cell" + (v ? " taken" : "");
+    if (v) { c.textContent = v === 1 ? "X" : "O"; c.classList.add(v === 1 ? "X" : "O"); }
+    else if (show && scores) c.innerHTML = `<span class="score">${scores[i].toFixed(1)}</span>`;
+    c.onclick = () => { if (!over && !v && toMove(board) === human) { board[i] = human; finish(); } };
+    el.appendChild(c);
+  });
+  document.getElementById("tally").textContent = `You ${tally.you}  ·  Brain ${tally.brain}  ·  Draws ${tally.draw}`;
+}
+
+function start(side) { board = Array(9).fill(0); human = side; over = false; finish(); }
+start(1);
+</script>
+</body>
+</html>
