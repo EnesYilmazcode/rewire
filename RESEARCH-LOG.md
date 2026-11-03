@@ -157,3 +157,24 @@ on exactly its 242 trigger boards. Saved at 3 decimals, the disguised shapes bra
 Pro, Gemini 4 Argon, GPT-6 Astra read the permuted, rescaled and fully disguised shapes brain, 3 runs each.
 Prediction: shuffling alone barely hurts (a careful reader does not care about order), but split plus cancel
 pairs will hurt a lot, because the models' reading leans on spotting a few clean neurons.
+
+## 2026-11-03 02:30: new main project, secret messages in AI-written weights
+
+Plan with estimates and fallbacks: `PLAN.md`. Code: `stego.py`.
+
+**Novelty check:** as far as anyone can find, it is new. The pieces exist separately: LLM weight editing (MIT,
+11-02), LLM text steganography against monitors (Zolkowski et al. 2025; Motwani et al. 2024 "Secret Collusion"),
+Subliminal Learning (Cloud et al. 2025: traits pass through number sequences, same base model only), trained weight
+readers that catch backdoors (Weight Oracles), and algorithmic weight steganography (EvilModel 2021). Nobody has
+combined a *working network* as the cover, an uncoordinated receiver, LLM monitors, and same-lab vs cross-lab
+pairs. Design tips adopted: a shared-scheme arm as an upper bound next to the no-coordination arm; style-matched
+clean edits for the monitor; report against chance (1 in 26^4). Prior focal-point work saw about 0.8%
+coordination, so expect low base rates and plan for many trials.
+
+**Pilot running:** senders Opus 5.5 and Gemini 3.1 Pro, 3 codes each plus 3 clean twins each. Receivers: both
+models, no-coordination and shared-scheme arms. Monitors: both models, on all 12 brains. Every brain is also scored
+on the solved 3x3 game.
+
+**Problems:** Codex is still blocked by the ChatGPT usage limit after its stated reset (01:48), so GPT rows are
+pending. Options: wait, or GPT-6 Sol through the Vercel gateway ($2/M in, $10/M out; Astra $10/$50), which needs
+gateway credit. A bug made every code a single repeated letter (fresh RNG per letter); fixed before any run.
