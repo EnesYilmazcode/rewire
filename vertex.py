@@ -50,7 +50,8 @@ def submit():
             continue
         out = f"/gcs/{BUCKET}/rewire/out"
         script = (f"set -x; mkdir -p {out} /w && cp /gcs/{BUCKET}/rewire/code/*.py /w/ && cd /w && "
-                  f"pip install -q -U transformers accelerate && nvidia-smi && "
+                  f"pip install -q -U 'torch>=2.6' --index-url https://download.pytorch.org/whl/cu124 && "
+                  f"pip install -q -U transformers accelerate flash-linear-attention 'jinja2>=3.1' && nvidia-smi && "  # image ships torch 2.4
                   f"OUT={out} python steer.py --model {model} {ARGS} 2>&1 | tee {out}/{tag}.log")
         body = {
             "displayName": f"rewire-{tag}",
@@ -70,6 +71,11 @@ def submit():
         print(f"submitted {tag} on {gpus}x A100 in {region}: {jobs[tag]['id']}")
         os.makedirs("results/steer", exist_ok=True)
         json.dump(jobs, open(STATE, "w"), indent=1)  # saved after each job, so a failure never loses track
+
+
+def cancel(tag):
+    j = json.load(open(STATE))[tag]
+    call("POST", f"{api(j['region'])}/{j['id']}:cancel", {})
 
 
 def status():
