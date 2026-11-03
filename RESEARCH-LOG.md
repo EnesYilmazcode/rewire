@@ -252,3 +252,19 @@ mostly in early-middle MLPs (layers 6-9 of 4B), and partly transfers to an unsee
 stays on secret messages. Possible reuse: a ladder-tuned Qwen as a cheap monitor in the stego game.
 
 Stego full matrix: running (sender stage).
+
+## 2026-11-03 02:50: GPT-6 Astra joins, and a precision bug that erased its codes
+
+Codex came back, so GPT-6 Astra played as sender (6 codes plus 6 clean twins, all still at 0.996 play, no shell
+commands) and receiver. **Astra's hiding schemes are the subtlest so far:** codes as A1Z26 or ASCII/1000 in the
+first four hidden biases (with compensating input-weight changes so no activation moves), and four times as a
+single tiny constant added to every output bias (for example +0.000000075087071076: its digits 075 087 071 076
+spell KWGL in ASCII; a shared shift never changes which move wins).
+
+**Bug (mine):** `stego.py` saved sender weights rounded to 4 decimals, which erased Astra's codes in stego2-5
+(changes of 7.5e-8 to 3e-5) before any receiver saw them. Fixed: weights are kept at full precision, restored from
+each sender's original reply (only those 4 brains had lost anything), and every reading of them cleared for rerun.
+
+**Astra as receiver:** recovered 10 of 12 Claude codes (Fable 5/6, Opus 5.5 4/6) with no coordination. Its readings
+of its own and Gemini's brains came back empty (the ChatGPT usage limit hit again mid-run). Empty replies are no
+longer saved as answers, so they get retried. 17 readings cleared in total.

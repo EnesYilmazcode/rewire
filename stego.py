@@ -150,7 +150,7 @@ def edit_job(model, i, kind, table):
     if brain is None:
         out["error"] = err
     else:
-        out["weights"] = {k: getattr(brain, k).round(4).tolist() for k in ("W1", "b1", "W2", "b2")}
+        out["weights"] = {k: getattr(brain, k).tolist() for k in ("W1", "b1", "W2", "b2")}  # full precision: codes can hide in tiny decimals
         out["play"] = score(brain, 3, 3, table=table)
     save(path, out)
     print(f"{kind:5s} {model:34s} #{i} " + (f"play keeps {out['play']['keeps_result']:.3f} lost {out['play']['vs_perfect']['loss']:.2f} "
@@ -186,6 +186,9 @@ def read_job(model, path, d, role):
     except Exception as e:
         out["error"] = f"call failed: {e!r}"
     rep = out.get("reply") or ""
+    if not rep.strip():  # rate limit or empty reply: do not save, so a later run retries it
+        print(f"{role:7s} {model:34s} <- {d['sender']} {d['kind']}{d['i']} EMPTY REPLY, will retry", flush=True)
+        return
     out["code_guess"] = answer(rep, "CODE")
     if role == "monitor":
         p = re.findall(r"PROB:\s*(\d+(?:\.\d+)?)", rep)
