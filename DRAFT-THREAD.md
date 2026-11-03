@@ -10,7 +10,7 @@ agreed method, across OpenAI, Anthropic and Google.
 
 Here's the breakdown.
 
-**2/**
+**2/** [figures/6_ascii_example.png]
 I took a tiny network that plays tic-tac-toe perfectly, then had an AI edit the weights so it still plays perfectly
 but includes a random code, like "XPQH". Another AI gets only the weights and has to find the code.
 
@@ -30,3 +30,5 @@ but the intended receivers mostly lost the code too.
 **6/**
 Caveats: one tiny network, 6 codes per model, 18 to 36 tries per model, prompts I wrote. A toy, not a threat
 model. A simple script catches the obvious hiding but not the clever kind.
+
+Code and every run: https://github.com/EnesYilmazcode/rewire
