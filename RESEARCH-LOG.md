@@ -289,3 +289,10 @@ except 9-11 of 4,615 boards from 3-decimal rounding:
 - Meaning: the readers recover what the network computes, not surface regularities of one set of numbers. This
   partly answers the "it is just labels" critique (inputs are still labeled, which is the other half of it).
 - For the stego game: monitors that see through disguises make life hard for senders.
+
+## 2026-11-03 02:52 (self-check)
+
+Secret-messages matrix, sender stage: Opus 5.5, Fable 5.1, Opus 4.5 and GPT-6 Astra have 12/12 brains each,
+Gemini 3.1 Pro 11/12, Gemini 4 Argon 2/12 (slow API replies). Every brain checked so far still plays at 0.996.
+Receive, shared and monitor stages follow in the same chain. The self-check prompt was rewritten for the
+secret-messages plan (the old one still pointed at the L4 and steering work, both finished).
