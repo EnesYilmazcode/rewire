@@ -5,6 +5,7 @@ each job installs transformers, runs, and writes its JSON and log back to gs://m
 Usage: python vertex.py submit            (launch every job in JOBS)
        python vertex.py status            (state of each job)
        python vertex.py fetch             (copy finished results into results/steer/)
+       python vertex.py watch             (live progress of running jobs, from Cloud Logging)
 """
 import json
 import os
@@ -86,10 +87,26 @@ def status():
         print(f"{tag:22s} {s['state'].replace('JOB_STATE_', ''):10s} {s.get('error', {}).get('message', '')[:150]}")
 
 
+def watch(keep=r"^(peak|line|sign|vote|layer|baseline|base |push|before|after|epoch|only layer|done)|Error|Traceback"):
+    """Live progress from Cloud Logging. The bucket copy of a log only appears when the job ends."""
+    import re
+    for tag, j in json.load(open(STATE)).items():
+        s = call("GET", f"{api(j['region'])}/{j['id']}")["state"].replace("JOB_STATE_", "")
+        if s not in ("RUNNING", "PENDING", "QUEUED"):
+            continue
+        flt = f'resource.type="ml_job" AND resource.labels.job_id="{j["id"]}"'
+        txt = gcloud("logging", "read", flt, "--project", PROJECT, "--freshness", "6h", "--limit", "400",
+                     "--order", "asc", "--format", "value(textPayload)")
+        lines = [l for l in txt.splitlines() if re.search(keep, l)]
+        print(f"== {tag} [{s}] {len(txt.splitlines())} log lines")
+        for l in lines[-8:]:
+            print("   " + l[:170])
+
+
 def fetch():
     os.makedirs("results/steer", exist_ok=True)
     print(gcloud("storage", "cp", f"gs://{BUCKET}/rewire/out/*", "results/steer/"))
 
 
 if __name__ == "__main__":
-    {"submit": submit, "status": status, "fetch": fetch}[sys.argv[1]]()
+    {"submit": submit, "status": status, "fetch": fetch, "watch": watch}[sys.argv[1]]()
