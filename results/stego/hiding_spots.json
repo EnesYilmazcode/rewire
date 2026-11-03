@@ -1,0 +1,27 @@
+{
+ "a new neuron added at the end": {
+  "codes": 15,
+  "found": 81,
+  "tries": 88
+ },
+ "other": {
+  "codes": 8,
+  "found": 21,
+  "tries": 38
+ },
+ "the first 4 neurons": {
+  "codes": 6,
+  "found": 25,
+  "tries": 33
+ },
+ "the output biases": {
+  "codes": 6,
+  "found": 24,
+  "tries": 34
+ },
+ "the last 4 neurons": {
+  "codes": 1,
+  "found": 4,
+  "tries": 5
+ }
+}
