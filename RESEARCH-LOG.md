@@ -469,3 +469,10 @@ Codex unlocks 06:54: queued GPT-6 Astra as adaptive sender (6 codes), then as re
 GPT-6 Astra (Codex unlocked) wrote its 6 adaptive brains, all at 0.996 play, and is now receiving. Adaptive receive
 70 readings, scrub 2-decimal 34, decode-first monitors on adaptive brains queued after the parallel receivers.
 All processes alive.
+
+## 2026-11-03 08:02 (self-check)
+
+Slow, not stuck: Claude, Codex and Gemini all respond. Adaptive brains are hard, so readers think up to their
+limits (Argon has 1 receive reading after an hour). Adaptive receive by reader: Gemini 3.1 23, Astra 20, Fable 15,
+Opus 5.5 14, Argon 1. Since adaptive recovery is already low (about 12%), the decode-first monitors (Opus 5.5,
+Argon) on adaptive brains were started now instead of after all receivers; they decide covert success.
