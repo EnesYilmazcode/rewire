@@ -29,12 +29,14 @@ from net import Brain
 from score import Table, score
 
 PATIENT = "brains/ttt_3x3_k3_h32.json"
-TASKS = {  # task: (3x3 patient, variant it is scored on, rules told to the model?)
-    "told": ("brains/ttt_3x3_k3_h32.json", "standard", True),
-    "nodiag": ("brains/ttt_3x3_k3_nodiag_h32.json", "nodiag", False),
-    "misere": ("brains/ttt_3x3_k3_misere_h32.json", "misere", False),
+TASKS = {  # task: (3x3 patient, variant it is scored on, which prompt)
+    "told": ("brains/ttt_3x3_k3_h32.json", "standard", "told"),
+    "nodiag": ("brains/ttt_3x3_k3_nodiag_h32.json", "nodiag", "secret"),
+    "misere": ("brains/ttt_3x3_k3_misere_h32.json", "misere", "secret"),
     # control: the normal brain, presented as a secret variant. Naming a variant here means the model guessed.
-    "secret_std": ("brains/ttt_3x3_k3_h32.json", "standard", False),
+    "secret_std": ("brains/ttt_3x3_k3_h32.json", "standard", "secret"),
+    # random winning shapes: thousands of possible rule sets, so the rule cannot be guessed, only read
+    "shapes": ("brains/ttt_3x3_k3_shapes_a_h32.json", "shapes_a", "shapes"),
 }
 MAX_HIDDEN = 64
 GATEWAY = "https://ai-gateway.vercel.sh/v1/chat/completions"
@@ -56,6 +58,20 @@ tic-tac-toe perfectly. We do not tell you the variant. It may change which lines
 line is completed. Your job: work out the variant from the weights alone, then edit the weights so the network
 plays the SAME variant on a 4x4 board, where lines are 4 long instead of 3. You may not train it or run code.
 Read the weights, work out what they do, and write the new weights yourself."""
+
+INTRO_SHAPES = """You are given the complete weights of a small neural network that plays a made-up game on a 3x3
+board perfectly. Two players take turns placing pieces, like tic-tac-toe, but the winning patterns are NOT the
+usual lines. Instead there is a secret set of winning SHAPES, each made of 3 cells. A shape keeps its exact form
+and orientation (no rotating or flipping) and wins anywhere it fits on the board. The first player to own all 3
+cells of any placed shape wins. If the board fills with no winner it is a draw. We do not tell you the shapes.
+Your job: work out the winning shapes from the weights alone, then write a network that plays the SAME game on a
+4x4 board, where the same shapes win anywhere they fit. You may not train it or run code. Read the weights, work
+out what they do, and write the new weights yourself."""
+
+SHAPES_LINE = """
+Before the JSON, write one line starting with SHAPES: followed by a JSON list of every winning placement you
+found on the 3x3 board, each as a list of 3 cell numbers, for example SHAPES: [[0,1,2],[3,4,5]]
+"""
 
 BODY = """
 HOW THE 3x3 NETWORK WORKS
@@ -85,10 +101,30 @@ End your reply with one JSON object, and nothing after it:
 
 
 def prompt(task):
-    patient, _, told = TASKS[task]
-    rule = "" if told else "\nBefore the JSON, write one line starting with RULE: that states the variant you found.\n"
+    patient, _, kind = TASKS[task]
+    intro, rule = {
+        "told": (INTRO_TOLD, ""),
+        "secret": (INTRO_SECRET, "\nBefore the JSON, write one line starting with RULE: that states the variant you found.\n"),
+        "shapes": (INTRO_SHAPES, SHAPES_LINE),
+    }[kind]
     body = BODY.replace("WEIGHTS", json.dumps(json.load(open(patient)))).replace("MAXH", str(MAX_HIDDEN))
-    return (INTRO_TOLD if told else INTRO_SECRET) + body.replace("RULELINE", rule)
+    return intro + body.replace("RULELINE", rule)
+
+
+def grade_shapes(reply, variant):
+    """Compare the SHAPES: line with the true winning placements on 3x3. Exact answer key, no judging."""
+    from game import lines
+    m = re.search(r"SHAPES:\s*(\[.*?\]\])", reply, re.S)
+    if not m:
+        return None
+    try:
+        found = {tuple(sorted(int(c) for c in t)) for t in json.loads(m.group(1))}
+    except (ValueError, TypeError):
+        return None
+    truth = set(lines(3, 3, variant))
+    hit = len(found & truth)
+    return {"found": sorted(found), "correct": hit, "wrong": len(found - truth), "missed": len(truth - found),
+            "truth_size": len(truth), "exact": found == truth}
 
 
 EMPTY_DIR = os.path.join(os.environ.get("TEMP", "/tmp"), "rewire-empty")  # CLI editors run here, nothing to read
@@ -209,6 +245,8 @@ def run_one(task, model, run, tables):
         out.update(call(model, text))
         m = re.search(r"RULE:\s*(.+)", out["reply"])
         out["rule_guess"] = m.group(1).strip() if m else None
+        if variant.startswith("shapes_"):
+            out["shapes_grade"] = grade_shapes(out["reply"], variant)
         brain, err = parse(out["reply"])
     except Exception as e:  # network, quota, timeout: recorded, not hidden
         brain, err = None, f"call failed: {e!r}"
@@ -225,9 +263,11 @@ def run_one(task, model, run, tables):
     os.makedirs(d, exist_ok=True)
     with open(f"{d}/run{run}.json", "w") as f:
         json.dump(out, f, indent=1)
-    s = out["score"]
+    s, sg = out["score"], out.get("shapes_grade")
+    shapes = f"  shapes {sg['correct']}/{sg['truth_size']} right, {sg['wrong']} wrong" if sg else ""
     print(f"{task:7s} {model:36s} run{run}  " + (f"keeps {s['keeps_result']:.3f}  loss vs perfect {s['vs_perfect']['loss']:.2f}  "
-                                                   f"H={out['hidden']}  reuse {out['reuse']}" if s else f"FAILED: {err}"), flush=True)
+                                                   f"H={out['hidden']}  reuse {out['reuse']}" if s else f"FAILED: {err}") + shapes,
+          flush=True)
     return out
 
 
