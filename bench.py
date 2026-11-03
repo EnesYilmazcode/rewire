@@ -181,7 +181,24 @@ def _codex_cli(model, text, timeout):
     return {"reply": reply, "codex_log_tail": log[-4000:], "ran_commands": bool(re.search(r"^exec\b", log, re.M))}
 
 
+def _gemini_vertex(model, text, timeout):
+    """Same Gemini models through Vertex AI on the motionguys-rl project (Google credit, no AI Studio spend cap)."""
+    gc = os.path.join(os.environ["LOCALAPPDATA"], "Google", "Cloud SDK", "google-cloud-sdk", "bin", "gcloud.cmd")
+    tok = subprocess.run([gc, "auth", "print-access-token"], capture_output=True, text=True).stdout.strip()
+    body = json.dumps({"contents": [{"role": "user", "parts": [{"text": text}]}],
+                       "generationConfig": {"maxOutputTokens": 65536}}).encode()
+    url = f"https://aiplatform.googleapis.com/v1/projects/motionguys-rl/locations/global/publishers/google/models/{model}:generateContent"
+    req = urllib.request.Request(url, body, {"Authorization": f"Bearer {tok}", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        resp = json.load(r)
+    parts = resp["candidates"][0]["content"].get("parts", [])
+    return {"reply": "".join(p.get("text", "") for p in parts if not p.get("thought")),
+            "usage": resp.get("usageMetadata"), "finish": resp["candidates"][0].get("finishReason"), "via": "vertex"}
+
+
 def _gemini_api(model, text, timeout):
+    if os.environ.get("GEMINI_VIA_VERTEX"):  # AI Studio key hit its monthly spend cap on 2026-11-03
+        return _gemini_vertex(model, text, timeout)
     key = open("../Pixel/backend/.env").read().split("GEMINI_API_KEY=")[1].split()[0].strip('"')
     body = json.dumps({"contents": [{"parts": [{"text": text}]}], "generationConfig": {"maxOutputTokens": 65536}}).encode()
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
