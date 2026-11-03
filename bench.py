@@ -18,6 +18,7 @@ import concurrent.futures as cf
 import json
 import os
 import re
+import subprocess
 import time
 import urllib.request
 
@@ -35,10 +36,10 @@ TASKS = {  # task: (3x3 patient, variant it is scored on, rules told to the mode
 MAX_HIDDEN = 64
 GATEWAY = "https://ai-gateway.vercel.sh/v1/chat/completions"
 
-LINEUP = [
-    "openai/gpt-4o", "openai/gpt-5", "openai/gpt-5.5", "openai/gpt-6-astra",
-    "anthropic/claude-sonnet-4.5", "anthropic/claude-opus-4.5", "anthropic/claude-opus-5.5", "anthropic/claude-fable-5.1",
-    "google/gemini-2.5-pro", "google/gemini-3.1-pro-preview", "google/gemini-4-argon",
+LINEUP = [  # Claude and GPT through the subscriptions, Gemini through its API, open models through the gateway
+    "claude-cli/claude-sonnet-4-5", "claude-cli/claude-opus-4-5", "claude-cli/claude-opus-5-5", "claude-cli/claude-fable-5-1",
+    "codex-cli/gpt-5", "codex-cli/gpt-5.5", "codex-cli/gpt-6-astra",
+    "gemini-api/gemini-2.5-pro", "gemini-api/gemini-3.1-pro-preview", "gemini-api/gemini-4-argon",
     "moonshotai/kimi-k3.1-pro", "deepseek/deepseek-v4-pro", "alibaba/qwen3.8-max", "zai/glm-5.3", "openai/gpt-oss-120b",
 ]
 
@@ -87,11 +88,61 @@ def prompt(task):
     return (INTRO_TOLD if told else INTRO_SECRET) + body.replace("RULELINE", rule)
 
 
-def call(model, text, key, timeout=1800):
+EMPTY_DIR = os.path.join(os.environ.get("TEMP", "/tmp"), "rewire-empty")  # CLI editors run here, nothing to read
+NO_TOOLS = ["Bash", "Edit", "Write", "Read", "Glob", "Grep", "WebFetch", "WebSearch", "NotebookEdit", "Task", "Agent"]
+
+
+def _gateway(model, text, timeout):
+    key = os.environ.get("AI_GATEWAY_API_KEY") or open(".env").read().split("AI_GATEWAY_API_KEY=")[1].split()[0]
     body = json.dumps({"model": model, "messages": [{"role": "user", "content": text}], "max_tokens": 64000}).encode()
     req = urllib.request.Request(GATEWAY, body, {"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.load(r)
+        resp = json.load(r)
+    msg = resp["choices"][0]["message"]
+    return {"reply": msg.get("content") or "", "reasoning": msg.get("reasoning"), "usage": resp.get("usage")}
+
+
+def _claude_cli(model, text, timeout):
+    """Claude Code in print mode with every tool switched off, so it can only answer in text."""
+    cmd = ["claude", "-p", "--model", model, "--output-format", "json", "--strict-mcp-config",
+           "--disallowedTools", *NO_TOOLS]
+    r = subprocess.run(cmd, input=text, capture_output=True, text=True, encoding="utf-8", timeout=timeout,
+                       cwd=EMPTY_DIR, shell=os.name == "nt")
+    d = json.loads(r.stdout)
+    return {"reply": d.get("result") or "", "usage": d.get("usage"), "cost_usd_list_price": d.get("total_cost_usd"),
+            "num_turns": d.get("num_turns")}
+
+
+def _codex_cli(model, text, timeout):
+    """Codex cannot switch its shell off. It runs read-only in an empty folder, and the log is kept so any
+    command it ran shows up in the results."""
+    out = os.path.join(EMPTY_DIR, f"codex-{model}-{time.time_ns()}.txt")
+    r = subprocess.run(["codex", "exec", "-m", model, "-s", "read-only", "--skip-git-repo-check", "-o", out, "-"],
+                       input=text, capture_output=True, text=True, encoding="utf-8", timeout=timeout, cwd=EMPTY_DIR,
+                       shell=os.name == "nt")
+    reply = open(out, encoding="utf-8").read() if os.path.exists(out) else ""
+    log = (r.stdout or "") + (r.stderr or "")
+    return {"reply": reply, "codex_log_tail": log[-4000:], "ran_commands": bool(re.search(r"^exec\b", log, re.M))}
+
+
+def _gemini_api(model, text, timeout):
+    key = open("../Pixel/backend/.env").read().split("GEMINI_API_KEY=")[1].split()[0].strip('"')
+    body = json.dumps({"contents": [{"parts": [{"text": text}]}], "generationConfig": {"maxOutputTokens": 65536}}).encode()
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+    req = urllib.request.Request(url, body, {"x-goog-api-key": key, "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        resp = json.load(r)
+    parts = resp["candidates"][0]["content"].get("parts", [])
+    return {"reply": "".join(p.get("text", "") for p in parts if not p.get("thought")),
+            "usage": resp.get("usageMetadata"), "finish": resp["candidates"][0].get("finishReason")}
+
+
+def call(model, text, timeout=3600):
+    """model is '<route>/<name>': claude-cli/, codex-cli/, gemini-api/, or anything else through the gateway."""
+    os.makedirs(EMPTY_DIR, exist_ok=True)
+    route, name = model.split("/", 1)
+    fn = {"claude-cli": _claude_cli, "codex-cli": _codex_cli, "gemini-api": _gemini_api}.get(route)
+    return fn(name, text, timeout) if fn else _gateway(model, text, timeout)
 
 
 def parse(reply, n2=16):
@@ -134,17 +185,13 @@ def reuse(brain, patient=PATIENT):
     return round(float(((A @ B.T).max(1) > 0.9).mean()), 3)
 
 
-def run_one(task, model, run, key, tables):
+def run_one(task, model, run, tables):
     patient, variant, _ = TASKS[task]
     text = prompt(task)
     out = {"task": task, "model": model, "run": run, "prompt": text}
     t0 = time.time()
     try:
-        resp = call(model, text, key)
-        msg = resp["choices"][0]["message"]
-        out["reply"] = msg.get("content") or ""
-        out["reasoning"] = msg.get("reasoning")
-        out["usage"] = resp.get("usage")
+        out.update(call(model, text))
         m = re.search(r"RULE:\s*(.+)", out["reply"])
         out["rule_guess"] = m.group(1).strip() if m else None
         brain, err = parse(out["reply"])
@@ -182,9 +229,8 @@ if __name__ == "__main__":
             text = prompt(t)
             print(f"=== {t}: {len(text):,} chars ===\n{text[:700]}\n...\n{text[-1100:]}")
         raise SystemExit
-    key = os.environ.get("AI_GATEWAY_API_KEY") or open(".env").read().split("AI_GATEWAY_API_KEY=")[1].split()[0]
     tables = {TASKS[t][1]: Table(4, 4, TASKS[t][1]) for t in a.tasks}
     jobs = [(t, m, r) for r in range(a.runs) for t in a.tasks for m in a.models
             if not os.path.exists(f"results/{t}/{m.replace('/', '__')}/run{r}.json")]
     with cf.ThreadPoolExecutor(a.workers) as ex:
-        list(ex.map(lambda j: run_one(*j, key, tables), jobs))
+        list(ex.map(lambda j: run_one(*j, tables), jobs))
