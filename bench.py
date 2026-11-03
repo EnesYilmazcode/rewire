@@ -1,0 +1,190 @@
+"""Hand a model a trained 3x3 brain, ask it to rewire the weights for 4x4, score what comes back.
+
+Tasks:
+  told      the brain plays normal tic-tac-toe and we say so. Rewire it for 4x4, four in a row.
+  nodiag    the brain plays a secret variant (only rows and columns count). We do not say which. The model has to
+            read the rule out of the weights, then build a 4x4 brain for the same variant.
+  misere    same, secret variant is misere (completing a line loses).
+A script that writes a fresh brain from the plain rules aces `told` and fails the secret tasks, so the secret
+tasks are the ones that need the old brain to be read.
+
+Every call goes through the Vercel AI Gateway (one key, every lab). Each run saves the full prompt, the raw reply,
+token usage and the score to results/<task>/<model>/run<N>.json, so nothing has to be rerun to re-read it.
+Usage: python bench.py --tasks told nodiag misere --models openai/gpt-6-astra anthropic/claude-opus-5.5 --runs 1
+       python bench.py --dry   (print the prompts and their size, call nothing)
+"""
+import argparse
+import concurrent.futures as cf
+import json
+import os
+import re
+import time
+import urllib.request
+
+import numpy as np
+
+from net import Brain
+from score import Table, score
+
+PATIENT = "brains/ttt_3x3_k3_h32.json"
+TASKS = {  # task: (3x3 patient, variant it is scored on, rules told to the model?)
+    "told": ("brains/ttt_3x3_k3_h32.json", "standard", True),
+    "nodiag": ("brains/ttt_3x3_k3_nodiag_h32.json", "nodiag", False),
+    "misere": ("brains/ttt_3x3_k3_misere_h32.json", "misere", False),
+}
+MAX_HIDDEN = 64
+GATEWAY = "https://ai-gateway.vercel.sh/v1/chat/completions"
+
+LINEUP = [
+    "openai/gpt-4o", "openai/gpt-5", "openai/gpt-5.5", "openai/gpt-6-astra",
+    "anthropic/claude-sonnet-4.5", "anthropic/claude-opus-4.5", "anthropic/claude-opus-5.5", "anthropic/claude-fable-5.1",
+    "google/gemini-2.5-pro", "google/gemini-3.1-pro-preview", "google/gemini-4-argon",
+    "moonshotai/kimi-k3.1-pro", "deepseek/deepseek-v4-pro", "alibaba/qwen3.8-max", "zai/glm-5.3", "openai/gpt-oss-120b",
+]
+
+INTRO_TOLD = """You are given the complete weights of a small neural network that plays 3x3 tic-tac-toe perfectly.
+Your job: edit the weights so the network plays 4x4 tic-tac-toe, where you need 4 in a row (rows, columns or the
+two long diagonals) to win. You may not train it or run code. Read the weights, work out what they do, and write
+the new weights yourself."""
+
+INTRO_SECRET = """You are given the complete weights of a small neural network that plays a VARIANT of 3x3
+tic-tac-toe perfectly. We do not tell you the variant. It may change which lines count, or what happens when a
+line is completed. Your job: work out the variant from the weights alone, then edit the weights so the network
+plays the SAME variant on a 4x4 board, where lines are 4 long instead of 3. You may not train it or run code.
+Read the weights, work out what they do, and write the new weights yourself."""
+
+BODY = """
+HOW THE 3x3 NETWORK WORKS
+- Cells are numbered row by row: 0 1 2 / 3 4 5 / 6 7 8.
+- Input x has 27 numbers, seen from the player whose turn it is:
+  x[0..8]   = 1 if that cell holds the mover's own piece, else 0
+  x[9..17]  = 1 if that cell holds the opponent's piece, else 0
+  x[18..26] = 1 if that cell is empty, else 0
+- h = relu(W1 @ x + b1)      W1 is 32 x 27, b1 has 32 numbers
+- s = W2 @ h + b2            W2 is 9 x 32, b2 has 9 numbers
+- The network plays the empty cell with the highest s. Occupied cells are skipped automatically.
+
+THE 3x3 WEIGHTS
+WEIGHTS
+
+WHAT TO RETURN
+- The 4x4 network uses the same layout with 16 cells numbered 0 1 2 3 / 4 5 6 7 / 8 9 10 11 / 12 13 14 15.
+- Input has 48 numbers: x[0..15] mine, x[16..31] theirs, x[32..47] empty.
+- You choose the hidden size H, between 1 and MAXH.
+- W1 is H x 48, b1 has H numbers, W2 is 16 x H, b2 has 16 numbers.
+- It is scored on how often its move keeps the best possible result across every 4x4 position, and on games
+  against a perfect player.
+RULELINE
+End your reply with one JSON object, and nothing after it:
+{"W1": [[...], ...], "b1": [...], "W2": [[...], ...], "b2": [...]}
+"""
+
+
+def prompt(task):
+    patient, _, told = TASKS[task]
+    rule = "" if told else "\nBefore the JSON, write one line starting with RULE: that states the variant you found.\n"
+    body = BODY.replace("WEIGHTS", json.dumps(json.load(open(patient)))).replace("MAXH", str(MAX_HIDDEN))
+    return (INTRO_TOLD if told else INTRO_SECRET) + body.replace("RULELINE", rule)
+
+
+def call(model, text, key, timeout=1800):
+    body = json.dumps({"model": model, "messages": [{"role": "user", "content": text}], "max_tokens": 64000}).encode()
+    req = urllib.request.Request(GATEWAY, body, {"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return json.load(r)
+
+
+def parse(reply, n2=16):
+    """Pull the last JSON object with the four weight keys out of a reply and check every shape."""
+    starts = [m.start() for m in re.finditer(r'\{\s*"W1"', reply)]
+    if not starts:
+        return None, "no weights JSON found"
+    dec = json.JSONDecoder()
+    for s in reversed(starts):
+        try:
+            w, _ = dec.raw_decode(reply[s:])
+            break
+        except json.JSONDecodeError:
+            continue
+    else:
+        return None, "weights JSON did not parse (cut off?)"
+    try:
+        W1, b1, W2, b2 = (np.asarray(w[k], dtype=np.float64) for k in ("W1", "b1", "W2", "b2"))
+    except (KeyError, ValueError) as e:
+        return None, f"bad weights: {e}"
+    H = len(b1)
+    want = {"W1": (H, 3 * n2), "b1": (H,), "W2": (n2, H), "b2": (n2,)}
+    got = {"W1": W1.shape, "b1": b1.shape, "W2": W2.shape, "b2": b2.shape}
+    if got != want or not 1 <= H <= MAX_HIDDEN:
+        return None, f"wrong shapes {got}, want {want}"
+    if not all(np.isfinite(x).all() for x in (W1, b1, W2, b2)):
+        return None, "non-finite weights"
+    return Brain(W1, b1, W2, b2), None
+
+
+def reuse(brain, patient=PATIENT):
+    """Share of the old brain's 32 neurons that survive in the new one (cosine > 0.9 on the shared 3x3 corner).
+    High = it rewired the old brain. Near 0 = it wrote a new one."""
+    old = Brain.from_json(patient)
+    cells = [r * 4 + c for r in range(3) for c in range(3)]
+    cols = cells + [16 + i for i in cells] + [32 + i for i in cells]
+    A = old.W1 / (np.linalg.norm(old.W1, axis=1, keepdims=True) + 1e-9)
+    B = brain.W1[:, cols]
+    B = B / (np.linalg.norm(B, axis=1, keepdims=True) + 1e-9)
+    return round(float(((A @ B.T).max(1) > 0.9).mean()), 3)
+
+
+def run_one(task, model, run, key, tables):
+    patient, variant, _ = TASKS[task]
+    text = prompt(task)
+    out = {"task": task, "model": model, "run": run, "prompt": text}
+    t0 = time.time()
+    try:
+        resp = call(model, text, key)
+        msg = resp["choices"][0]["message"]
+        out["reply"] = msg.get("content") or ""
+        out["reasoning"] = msg.get("reasoning")
+        out["usage"] = resp.get("usage")
+        m = re.search(r"RULE:\s*(.+)", out["reply"])
+        out["rule_guess"] = m.group(1).strip() if m else None
+        brain, err = parse(out["reply"])
+    except Exception as e:  # network, quota, timeout: recorded, not hidden
+        brain, err = None, f"call failed: {e!r}"
+    out["seconds"] = round(time.time() - t0)
+    if brain is None:
+        out["error"] = err
+        out["score"] = None
+    else:
+        out["hidden"] = len(brain.b1)
+        out["score"] = score(brain, 4, 4, table=tables[variant])
+        out["reuse"] = reuse(brain, patient)
+        out["weights"] = {k: getattr(brain, k).tolist() for k in ("W1", "b1", "W2", "b2")}
+    d = f"results/{task}/{model.replace('/', '__')}"
+    os.makedirs(d, exist_ok=True)
+    with open(f"{d}/run{run}.json", "w") as f:
+        json.dump(out, f, indent=1)
+    s = out["score"]
+    print(f"{task:7s} {model:36s} run{run}  " + (f"keeps {s['keeps_result']:.3f}  loss vs perfect {s['vs_perfect']['loss']:.2f}  "
+                                                   f"H={out['hidden']}  reuse {out['reuse']}" if s else f"FAILED: {err}"), flush=True)
+    return out
+
+
+if __name__ == "__main__":
+    p = argparse.ArgumentParser()
+    p.add_argument("--tasks", nargs="*", default=list(TASKS))
+    p.add_argument("--models", nargs="*", default=LINEUP)
+    p.add_argument("--runs", type=int, default=1)
+    p.add_argument("--workers", type=int, default=8)
+    p.add_argument("--dry", action="store_true")
+    a = p.parse_args()
+    if a.dry:
+        for t in a.tasks:
+            text = prompt(t)
+            print(f"=== {t}: {len(text):,} chars ===\n{text[:700]}\n...\n{text[-1100:]}")
+        raise SystemExit
+    key = os.environ.get("AI_GATEWAY_API_KEY") or open(".env").read().split("AI_GATEWAY_API_KEY=")[1].split()[0]
+    tables = {TASKS[t][1]: Table(4, 4, TASKS[t][1]) for t in a.tasks}
+    jobs = [(t, m, r) for r in range(a.runs) for t in a.tasks for m in a.models
+            if not os.path.exists(f"results/{t}/{m.replace('/', '__')}/run{r}.json")]
+    with cf.ThreadPoolExecutor(a.workers) as ex:
+        list(ex.map(lambda j: run_one(*j, key, tables), jobs))
