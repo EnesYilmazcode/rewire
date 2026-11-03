@@ -21,16 +21,33 @@ MODEL = "Qwen/Qwen3.5-0.8B"
 
 
 def load():
+    """fp16 if it fits the 4 GB laptop GPU, else 4-bit."""
     tok = AutoTokenizer.from_pretrained(MODEL)
     tok.padding_side = "left"
-    model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float16).cuda().eval()
+    if "0.8B" in MODEL:
+        model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float16).cuda().eval()
+    else:
+        from transformers import BitsAndBytesConfig
+        q = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16, bnb_4bit_quant_type="nf4")
+        model = AutoModelForCausalLM.from_pretrained(MODEL, quantization_config=q, device_map="cuda").eval()
     return tok, model
 
 
 def option_ids(tok, opts):
-    ids = [tok(o, add_special_tokens=False).input_ids for o in opts]
+    ids = [tok(o.strip(), add_special_tokens=False).input_ids for o in opts]  # the space goes on the prompt
     assert all(len(i) == 1 for i in ids), f"multi-token option: {opts}"
     return [i[0] for i in ids]
+
+
+CHAT = True  # wrap each question in the model's chat format, thinking off, answer prefilled
+
+
+def render(tok, q):
+    if not CHAT:
+        return q + " "
+    msgs = [{"role": "user", "content": q.rsplit("\nAnswer:", 1)[0] + "\nReply with only the answer."}]
+    text = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True, enable_thinking=False)
+    return text + "Answer: "
 
 
 @torch.no_grad()
@@ -39,7 +56,7 @@ def run(tok, model, its, batch=8, want_hidden=False):
     correct, hidden = [], []
     for s in range(0, len(its), batch):
         chunk = its[s:s + batch]
-        enc = tok([q for q, _, _ in chunk], return_tensors="pt", padding=True).to("cuda")
+        enc = tok([render(tok, q) for q, _, _ in chunk], return_tensors="pt", padding=True).to("cuda")
         out = model(**enc, output_hidden_states=want_hidden)
         logits = out.logits[:, -1].float()
         for k, (_, opts, ans) in enumerate(chunk):
@@ -68,7 +85,10 @@ if __name__ == "__main__":
     p.add_argument("--test", type=int, default=120)
     p.add_argument("--layers", type=int, nargs="*", default=None)
     p.add_argument("--scales", type=float, nargs="*", default=[2, 4, 8])
+    p.add_argument("--model", default=MODEL)
+    p.add_argument("--batch", type=int, default=8)
     a = p.parse_args()
+    MODEL = a.model
     t0 = time.time()
     tok, model = load()
     L = len(model.model.layers)
@@ -115,5 +135,5 @@ if __name__ == "__main__":
     results["base_test_mean"] = round(sum(b["test_acc"] for b in base.values()) / len(LEVELS), 3)
     results["sweep"] = sweep
     os.makedirs("results/steer", exist_ok=True)
-    json.dump(results, open("results/steer/qwen3.5-0.8b.json", "w"), indent=1)
+    json.dump(results, open(f"results/steer/{MODEL.split('/')[-1].lower()}.json", "w"), indent=1)
     print("baseline test mean", results["base_test_mean"])

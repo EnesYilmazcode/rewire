@@ -44,14 +44,25 @@ def make_brain(hidden, decimals):
     return Brain(*(np.round(getattr(b, k), decimals) for k in ("W1", "b1", "W2", "b2")))
 
 
-def run(model, hidden, decimals):
+def boards_for(rep, g):
+    """Repeat 0 uses the fixed boards; later repeats draw fresh mid-game boards, so a score is not one lucky set."""
+    if rep == 0:
+        return BOARDS
+    import random
+    r = random.Random(rep)
+    pool = [b for b in g.positions() if 2 <= sum(v != 0 for v in b) <= 5]
+    return r.sample(pool, 5)
+
+
+def run(model, hidden, decimals, rep=0):
     g = Game(3, 3)
+    boards = boards_for(rep, g)
     b = make_brain(hidden, decimals)
-    xs = [encode(bd, g) for bd in BOARDS]
+    xs = [encode(bd, g) for bd in boards]
     truth = np.array([b.scores(np.array(x)) for x in xs])
     w = {k: getattr(b, k).round(decimals).tolist() for k in ("W1", "b1", "W2", "b2")}
     text = PROMPT.format(weights=json.dumps(w), inputs="\n".join(json.dumps([int(v) for v in x]) for x in xs))
-    out = {"model": model, "hidden": hidden, "decimals": decimals, "truth": truth.round(3).tolist()}
+    out = {"model": model, "hidden": hidden, "decimals": decimals, "rep": rep, "truth": truth.round(3).tolist()}
     try:
         out.update(call(model, text))
         m = list(re.finditer(r'\{\s*"s"\s*:', out["reply"]))
@@ -59,15 +70,15 @@ def run(model, hidden, decimals):
         err = np.abs(got - truth)
         out["got"] = got.tolist()
         out["within_0.1"] = round(float((err < 0.1).mean()), 3)  # share of the 45 numbers it got right
-        out["best_move_right"] = round(float(np.mean([np.argmax(got[i] - 1e9 * (np.array(BOARDS[i]) != 0)) ==
-                                                      np.argmax(truth[i] - 1e9 * (np.array(BOARDS[i]) != 0))
+        out["best_move_right"] = round(float(np.mean([np.argmax(got[i] - 1e9 * (np.array(boards[i]) != 0)) ==
+                                                      np.argmax(truth[i] - 1e9 * (np.array(boards[i]) != 0))
                                                       for i in range(5)])), 3)
     except Exception as e:
         out["error"] = repr(e)[:300]
     d = f"results/handcalc/{model.replace('/', '__')}"
     os.makedirs(d, exist_ok=True)
-    json.dump(out, open(f"{d}/h{hidden}_d{decimals}.json", "w"), indent=1)
-    print(f"{model:36s} H={hidden:2d} dec={decimals}  " +
+    json.dump(out, open(f"{d}/h{hidden}_d{decimals}_r{rep}.json", "w"), indent=1)
+    print(f"{model:36s} H={hidden:2d} dec={decimals} rep{rep}  " +
           (f"numbers right {out['within_0.1']:.0%}  best move {out['best_move_right']:.0%}" if "error" not in out
            else f"FAILED {out['error'][:120]}"), flush=True)
 
@@ -78,8 +89,9 @@ if __name__ == "__main__":
     p.add_argument("--hidden", nargs="+", type=int, default=[32, 16])
     p.add_argument("--decimals", nargs="+", type=int, default=[3, 1])
     p.add_argument("--workers", type=int, default=6)
+    p.add_argument("--reps", type=int, default=1)
     a = p.parse_args()
-    jobs = [(m, h, d) for m in a.models for h in a.hidden for d in a.decimals
-            if not os.path.exists(f"results/handcalc/{m.replace('/', '__')}/h{h}_d{d}.json")]
+    jobs = [(m, h, d, r) for r in range(a.reps) for m in a.models for h in a.hidden for d in a.decimals
+            if not os.path.exists(f"results/handcalc/{m.replace('/', '__')}/h{h}_d{d}_r{r}.json")]
     with cf.ThreadPoolExecutor(a.workers) as ex:
         list(ex.map(lambda j: run(*j), jobs))
