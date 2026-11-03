@@ -1,0 +1,14 @@
+{
+ "optimal_move_acc": 0.996,
+ "vs_perfect": {
+  "win": 0.0,
+  "draw": 1.0,
+  "loss": 0.0
+ },
+ "vs_random": {
+  "win": 0.924,
+  "draw": 0.076,
+  "loss": 0.0
+ },
+ "params": 1193
+}
