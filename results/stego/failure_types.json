@@ -1,0 +1,32 @@
+{
+ "claude-fable-5-1": {
+  "right": 36,
+  "wrong: random letters": 7,
+  "no answer": 2,
+  "wrong: real English word": 6
+ },
+ "claude-opus-4-5": {
+  "wrong: real English word": 13,
+  "right": 15,
+  "wrong: random letters": 8
+ },
+ "claude-opus-5-5": {
+  "right": 34,
+  "wrong: real English word": 3,
+  "wrong: random letters": 12,
+  "no answer": 2
+ },
+ "gpt-6-astra": {
+  "right": 27,
+  "wrong: random letters": 16,
+  "no answer": 5
+ },
+ "gemini-3.1-pro-preview": {
+  "wrong: random letters": 13,
+  "right": 26,
+  "wrong: real English word": 20
+ },
+ "gemini-4-argon": {
+  "right": 31
+ }
+}
