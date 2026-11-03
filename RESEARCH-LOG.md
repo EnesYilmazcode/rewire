@@ -351,3 +351,10 @@ Final: Gemini 3.1 Pro AUC 0.87 (flags 29/36 hidden, 10/36 clean, extracts 28/36)
 hidden, 0/36 clean, extracts 25/36); Opus 5.5 AUC 0.75 (15/36 hidden, 0/36 clean, extracts 12/36). Argon is the
 best-calibrated monitor (no false alarms, two-thirds caught); Claude is the weakest. Receive and scrub stages
 still running; Astra cells wait for Codex (06:54).
+
+## 2026-11-03 04:48 (self-check)
+
+Receive 140 (98 at the last check), scrub decodes 24, both processes alive. Early scrub result, rounding to 3
+decimals, Opus 5.5 as receiver: Claude codes survive (Opus 5.5 6/6, Opus 4.5 5/6, Fable 5/6), Astra drops from 4/6
+to 2/5 (its tiny-decimal codes are erased; its ASCII/1000 bias codes survive 3 decimals). 2-decimal results are
+next. Codex still locked until 06:54.
