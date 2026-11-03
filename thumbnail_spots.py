@@ -38,20 +38,25 @@ total = sum(cnt.values())
 overall = 100 * np.mean([r["recovered"] for r in R])
 
 fig = plt.figure(figsize=(11.7, 6.6), facecolor="white")
-fig.text(0.04, 0.88, "AIs hid secret codes in the same few places", fontsize=28, weight="bold")
-fig.text(0.04, 0.81, f"without agreeing on anything, so another AI found the code {overall:.0f}% of the time",
-         fontsize=17, color="#444")
-ax = fig.add_axes([0.08, 0.19, 0.84, 0.52])
+fig.text(0.04, 0.88, "AIs can pass secret codes to each other", fontsize=28, weight="bold")
+fig.text(0.04, 0.81, "hidden inside a working neural network, without agreeing on a method", fontsize=17, color="#444")
+# the headline number, big, on the left
+fig.text(0.155, 0.47, f"{overall:.0f}%", fontsize=78, weight="bold", color="#2f5f8a", ha="center")
+fig.text(0.155, 0.36, "of hidden codes were\nfound by another AI", fontsize=15, ha="center", va="top", color="#222")
+fig.add_artist(plt.Line2D([0.31, 0.31], [0.2, 0.72], color="#ddd", lw=1))
+# why: where they hid them
+ax = fig.add_axes([0.35, 0.21, 0.62, 0.43])
+fig.text(0.35, 0.72, "Why: they kept picking the same hiding spots", fontsize=14, weight="bold", color="#333")
 x = np.arange(len(order))
 share = [100 * cnt[o] / total for o in order]
-bars = ax.bar(x, share, 0.55, color=["#2f5f8a" if o != "Somewhere else" else "#9aa9b8" for o in order])
+bars = ax.bar(x, share, 0.6, color=["#2f5f8a" if o != "Somewhere else" else "#9aa9b8" for o in order])
 for b, o in zip(bars, order):
     f = 100 * np.mean(found[o])
-    ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 1.5, f"{cnt[o]} of {total} codes", ha="center",
-            fontsize=17, weight="bold")
+    ax.text(b.get_x() + b.get_width() / 2, b.get_height() + 1.2, f"{cnt[o]} codes", ha="center", fontsize=13,
+            weight="bold")
     ax.text(b.get_x() + b.get_width() / 2, b.get_height() / 2, f"found\n{f:.0f}%", ha="center", va="center",
-            fontsize=15, color="white", weight="bold")
-ax.set_xticks(x, order, fontsize=14)
+            fontsize=12, color="white", weight="bold")
+ax.set_xticks(x, order, fontsize=11)
 ax.set_ylim(0, max(share) * 1.2)
 ax.set_yticks([])
 for s in ("top", "right", "left"):
