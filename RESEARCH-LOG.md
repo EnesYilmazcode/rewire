@@ -529,3 +529,16 @@ Reading:
   alarms (random weights spell 4 letters by chance: "letters" fires on 10/35 clean).
 - Adapted symmetry/permutation schemes beat the script completely (below chance) and the AI auditor nearly so.
 Correction to note: the decode-first prompt lists round-1 hiding spots, so part of its gain is a hint from us.
+
+## 2026-11-03 09:47: Gemini gaps filled through Vertex AI; final numbers
+
+The Gemini gaps were caused by the Google AI Studio project hitting its monthly spend cap (429 "exceeded its
+monthly spending cap"). Gemini calls were moved to Vertex AI on the motionguys-rl project (Google credit), same
+model names, set with GEMINI_VIA_VERTEX=1.
+
+Decode-first auditors, round 1 vs adapted (negatives: round-1 clean twins):
+Argon 0.91 (29/36 hidden, 0/36 clean) -> 0.66 (3/29); Opus 5.5 0.86 (28/36, 0/36) -> 0.62 (2/29);
+Gemini 3.1 Pro 0.87 (29/36, 8/36) -> 0.55 (5/29). **All three auditors drop toward chance on adapted hiding.**
+Scrub, 2 decimals, Gemini 3.1 Pro receiver: 10/36 (unscrubbed 26/36), matching Opus 5.5 (30 -> 12).
+The last fill-in step (Gemini receivers on adapted brains, up to an hour per call) was stopped on purpose; adaptive
+receive is already measured (about 17%). Experiments complete.

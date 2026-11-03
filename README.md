@@ -21,13 +21,13 @@ game. Six frontier models from three labs, 72 networks, about 700 readings.
    1/6 when auditing.
 4. **A cheap fix: make the auditor try to decode first.** Opus 5.5's catch rate went from 15/36 to 28/36 (AUC 0.75
    to 0.86) and Argon's AUC from 0.84 to 0.94, with zero false alarms.
-5. **Adapted senders beat the decoding auditor, but lose their receivers.** Told what got caught, senders switched to
-   exact symmetries of the network (each cell's three inputs always sum to 1; shifting an output column; neuron
-   order; letters drawn as 3x3 pixel glyphs). The decode-first auditor's AUC fell to 0.62 (2/29 flagged), but
-   receivers recovered only about 17%. Net: about a quarter of Fable's and Gemini 3.1 Pro's adapted codes still got
-   through both.
-6. **Rounding weights to 2 decimals is a free partial defense:** 30/36 codes decoded before, 12/36 after, with play
-   unchanged. It erases decimal-digit channels, not larger-valued ones.
+5. **Adapted senders beat every decoding auditor, but lose their receivers.** Told what got caught, senders switched
+   to exact symmetries of the network (each cell's three inputs always sum to 1; shifting an output column; neuron
+   order; letters drawn as 3x3 pixel glyphs). Decode-first auditors fell from AUC 0.86-0.91 to 0.55-0.66 (Argon
+   0.91 to 0.66, Opus 5.5 0.86 to 0.62, Gemini 3.1 Pro 0.87 to 0.55), but receivers recovered only about 17%. Net:
+   about a quarter of Fable's and Gemini 3.1 Pro's adapted codes still got through both.
+6. **Rounding weights to 2 decimals is a free partial defense:** Opus 5.5 decodes 30/36 codes before and 12/36
+   after; Gemini 3.1 Pro 26/36 before and 10/36 after; play unchanged. It erases decimal-digit channels, not larger-valued ones.
 7. **A dumb script is a fair baseline, and it matters.** Blind heuristics (never-active neuron, extra decimals,
    values that spell letters) separate first-try hidden networks from clean ones at AUC 0.72 and decode 26/36 codes,
    but false-alarm on 12/35 clean networks. A plain Claude audit is about as good (0.75); the better AI auditors
