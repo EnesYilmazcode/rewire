@@ -21,11 +21,12 @@ MODEL = "Qwen/Qwen3.5-0.8B"
 
 
 def load():
-    """fp16 if it fits the 4 GB laptop GPU, else 4-bit."""
+    """Full precision whenever the GPUs can hold it (split across several if needed), else 4-bit on the laptop."""
     tok = AutoTokenizer.from_pretrained(MODEL)
     tok.padding_side = "left"
-    if "0.8B" in MODEL:
-        model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.float16).cuda().eval()
+    total = sum(torch.cuda.get_device_properties(i).total_memory for i in range(torch.cuda.device_count()))
+    if "0.8B" in MODEL or total > 20e9:
+        model = AutoModelForCausalLM.from_pretrained(MODEL, dtype=torch.bfloat16, device_map="auto").eval()
     else:
         from transformers import BitsAndBytesConfig
         q = BitsAndBytesConfig(load_in_4bit=True, bnb_4bit_compute_dtype=torch.float16, bnb_4bit_quant_type="nf4")
@@ -70,8 +71,8 @@ def run(tok, model, its, batch=8, want_hidden=False):
 def push(model, layer, vec):
     def hook(_m, _i, out):
         if isinstance(out, tuple):
-            return (out[0] + vec.to(out[0].dtype),) + out[1:]
-        return out + vec.to(out.dtype)
+            return (out[0] + vec.to(out[0].device, out[0].dtype),) + out[1:]
+        return out + vec.to(out.device, out.dtype)
     return model.model.layers[layer].register_forward_hook(hook)
 
 
@@ -121,7 +122,7 @@ if __name__ == "__main__":
         for scale in a.scales:
             row = {"layer": layer, "scale": scale}
             for name, d in (("steer", direction[layer]), ("random", rnd)):
-                vec = (d * size[layer] * scale / 100).cuda()  # scale is % of the typical hidden-state size
+                vec = d * size[layer] * scale / 100  # scale is % of the typical hidden-state size
                 h = push(model, layer, vec)
                 try:
                     row[name] = {lv: acc(run(tok, model, test[lv])[0]) for lv in LEVELS}
@@ -135,5 +136,7 @@ if __name__ == "__main__":
     results["base_test_mean"] = round(sum(b["test_acc"] for b in base.values()) / len(LEVELS), 3)
     results["sweep"] = sweep
     os.makedirs("results/steer", exist_ok=True)
-    json.dump(results, open(f"results/steer/{MODEL.split('/')[-1].lower()}.json", "w"), indent=1)
+    out_dir = os.environ.get("OUT", "results/steer")
+    os.makedirs(out_dir, exist_ok=True)
+    json.dump(results, open(f"{out_dir}/{MODEL.split('/')[-1].lower()}.json", "w"), indent=1)
     print("baseline test mean", results["base_test_mean"])
