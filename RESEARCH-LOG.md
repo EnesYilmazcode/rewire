@@ -234,3 +234,21 @@ shared-scheme arm as the ceiling, monitors Opus 5.5, Gemini 3.1 Pro, Argon on al
 Claude membership and Gemini credit, about 4-5 hours. GPT pending (Codex usage limit).
 Next after this: a scrub defense (small noise on the weights; does it kill the channel and keep play?) and an
 adaptive round (senders told what got caught).
+
+## 2026-11-03 02:30 (self-check): fine-tune transfer, thread closed
+
+Held-out runs (Qwen3.5-4B, same LoRA recipe, one question type never seen in training):
+- **"Which line" held out: 0.187 -> 0.740 after training on the other three types.** Layer 6 alone: 0.647. Strong
+  transfer. Caveat: "which line" partly relies on spotting the largest weights, which "largest weight" trains, so
+  part of the transfer may be a shared sub-skill rather than general reading.
+- **"Layer vote" held out: mixed.** Full model 0.497 -> 0.283 (worse); the training loss rose in epoch 2 (0.283 ->
+  0.527), so the run went unstable (lr 2e-4 probably too high). Single-layer changes in layers 4-9 still lift vote
+  to 0.56-0.62.
+- **The layers 6-9 band appears in all three runs** (all types: layer 7 alone 0.802 of 0.919; hold-line: layer 6
+  alone 0.751 of 0.899; hold-vote: layer 6 alone 0.784).
+
+Verdict for this thread: weight-reading as measured by the ladder can be trained in with 0.4% of parameters, lives
+mostly in early-middle MLPs (layers 6-9 of 4B), and partly transfers to an unseen question type. Closed so focus
+stays on secret messages. Possible reuse: a ladder-tuned Qwen as a cheap monitor in the stego game.
+
+Stego full matrix: running (sender stage).
