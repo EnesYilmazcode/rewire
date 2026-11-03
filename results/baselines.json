@@ -1,0 +1,216 @@
+{
+ "told": {
+  "random": {
+   "keeps_result": 0.5936,
+   "best_move": 0.5617,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.285,
+    "loss": 0.715
+   },
+   "vs_random": {
+    "win": 0.238,
+    "draw": 0.368,
+    "loss": 0.393
+   },
+   "hidden": 32,
+   "reuse": 0.0
+  },
+  "transplant": {
+   "keeps_result": 0.7148,
+   "best_move": 0.6828,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.354,
+    "loss": 0.646
+   },
+   "vs_random": {
+    "win": 0.479,
+    "draw": 0.306,
+    "loss": 0.214
+   },
+   "hidden": 32,
+   "reuse": 1.0
+  },
+  "handcoded_plain_rules": {
+   "keeps_result": 0.998,
+   "best_move": 0.9978,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 1.0,
+    "loss": 0.0
+   },
+   "vs_random": {
+    "win": 0.965,
+    "draw": 0.035,
+    "loss": 0.0
+   },
+   "hidden": 50,
+   "reuse": 0.0
+  },
+  "trained_h64": {
+   "keeps_result": 0.9965,
+   "best_move": 0.9963,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.998,
+    "loss": 0.002
+   },
+   "vs_random": {
+    "win": 0.563,
+    "draw": 0.437,
+    "loss": 0.0
+   },
+   "hidden": 64,
+   "reuse": 0.125
+  }
+ },
+ "nodiag": {
+  "random": {
+   "keeps_result": 0.6728,
+   "best_move": 0.6593,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.546,
+    "loss": 0.454
+   },
+   "vs_random": {
+    "win": 0.189,
+    "draw": 0.585,
+    "loss": 0.227
+   },
+   "hidden": 32,
+   "reuse": 0.0
+  },
+  "transplant": {
+   "keeps_result": 0.7744,
+   "best_move": 0.7649,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.638,
+    "loss": 0.361
+   },
+   "vs_random": {
+    "win": 0.506,
+    "draw": 0.374,
+    "loss": 0.119
+   },
+   "hidden": 32,
+   "reuse": 1.0
+  },
+  "handcoded_plain_rules": {
+   "keeps_result": 0.9803,
+   "best_move": 0.98,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 1.0,
+    "loss": 0.0
+   },
+   "vs_random": {
+    "win": 0.833,
+    "draw": 0.167,
+    "loss": 0.0
+   },
+   "hidden": 50,
+   "reuse": 0.0
+  },
+  "handcoded_knows_rule": {
+   "keeps_result": 1.0,
+   "best_move": 1.0,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 1.0,
+    "loss": 0.0
+   },
+   "vs_random": {
+    "win": 0.906,
+    "draw": 0.093,
+    "loss": 0.0
+   },
+   "hidden": 40,
+   "reuse": 0.0
+  },
+  "trained_h64": {
+   "keeps_result": 0.9977,
+   "best_move": 0.9977,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.995,
+    "loss": 0.005
+   },
+   "vs_random": {
+    "win": 0.46,
+    "draw": 0.54,
+    "loss": 0.001
+   },
+   "hidden": 64,
+   "reuse": 0.188
+  }
+ },
+ "misere": {
+  "random": {
+   "keeps_result": 0.8105,
+   "best_move": 0.7898,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.512,
+    "loss": 0.487
+   },
+   "vs_random": {
+    "win": 0.399,
+    "draw": 0.351,
+    "loss": 0.251
+   },
+   "hidden": 32,
+   "reuse": 0.0
+  },
+  "transplant": {
+   "keeps_result": 0.8696,
+   "best_move": 0.8591,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.377,
+    "loss": 0.624
+   },
+   "vs_random": {
+    "win": 0.545,
+    "draw": 0.221,
+    "loss": 0.234
+   },
+   "hidden": 32,
+   "reuse": 1.0
+  },
+  "handcoded_plain_rules": {
+   "keeps_result": 0.5213,
+   "best_move": 0.4395,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.018,
+    "loss": 0.982
+   },
+   "vs_random": {
+    "win": 0.0,
+    "draw": 0.037,
+    "loss": 0.963
+   },
+   "hidden": 50,
+   "reuse": 0.0
+  },
+  "trained_h64": {
+   "keeps_result": 0.9902,
+   "best_move": 0.9902,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 1.0,
+    "loss": 0.001
+   },
+   "vs_random": {
+    "win": 0.5,
+    "draw": 0.499,
+    "loss": 0.0
+   },
+   "hidden": 64,
+   "reuse": 0.062
+  }
+ }
+}
