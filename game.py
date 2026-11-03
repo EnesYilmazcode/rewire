@@ -1,12 +1,15 @@
-"""Tic-tac-toe on an n x n board, k in a row wins. Perfect play by memoized minimax."""
+"""Tic-tac-toe on an n x n board with k in a row, plus rule variants. Perfect play by memoized minimax.
+
+Variants: standard; nodiag (only rows and columns count); misere (completing a line loses)."""
 from functools import lru_cache
 import itertools
 
 
-def lines(n, k):
+def lines(n, k, variant="standard"):
+    dirs = ((0, 1), (1, 0)) if variant == "nodiag" else ((0, 1), (1, 0), (1, 1), (1, -1))
     out = []
     for r, c in itertools.product(range(n), range(n)):
-        for dr, dc in ((0, 1), (1, 0), (1, 1), (1, -1)):
+        for dr, dc in dirs:
             cells = [(r + i * dr, c + i * dc) for i in range(k)]
             if all(0 <= rr < n and 0 <= cc < n for rr, cc in cells):
                 out.append(tuple(rr * n + cc for rr, cc in cells))
@@ -16,16 +19,17 @@ def lines(n, k):
 class Game:
     """Board is a tuple of n*n ints: 0 empty, 1 X, 2 O. X moves first."""
 
-    def __init__(self, n=3, k=3):
-        self.n, self.k = n, k
-        self.lines = lines(n, k)
+    def __init__(self, n=3, k=3, variant="standard"):
+        self.n, self.k, self.variant = n, k, variant
+        self.lines = lines(n, k, variant)
         self.value = lru_cache(maxsize=None)(self._value)
 
     def winner(self, b):
+        """Who won the game (misere: the player who did NOT complete the line)."""
         for ln in self.lines:
             v = b[ln[0]]
             if v and all(b[i] == v for i in ln):
-                return v
+                return 3 - v if self.variant == "misere" else v
         return 0
 
     def to_move(self, b):
@@ -42,7 +46,7 @@ class Game:
     def _value(self, b):
         """Score for the player to move: +1 win, 0 draw, -1 loss (faster wins preferred)."""
         if self.winner(b):
-            return -1.0  # previous player just won
+            return -1.0 if self.variant != "misere" else 1.0  # previous player just completed a line
         ms = self.moves(b)
         if not ms:
             return 0.0
