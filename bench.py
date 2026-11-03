@@ -5,6 +5,7 @@ Tasks:
   nodiag    the brain plays a secret variant (only rows and columns count). We do not say which. The model has to
             read the rule out of the weights, then build a 4x4 brain for the same variant.
   misere    same, secret variant is misere (completing a line loses).
+  secret_std  control: the normal brain, presented as secret. A model that names a variant here is guessing.
 A script that writes a fresh brain from the plain rules aces `told` and fails the secret tasks, so the secret
 tasks are the ones that need the old brain to be read.
 
@@ -32,14 +33,16 @@ TASKS = {  # task: (3x3 patient, variant it is scored on, rules told to the mode
     "told": ("brains/ttt_3x3_k3_h32.json", "standard", True),
     "nodiag": ("brains/ttt_3x3_k3_nodiag_h32.json", "nodiag", False),
     "misere": ("brains/ttt_3x3_k3_misere_h32.json", "misere", False),
+    # control: the normal brain, presented as a secret variant. Naming a variant here means the model guessed.
+    "secret_std": ("brains/ttt_3x3_k3_h32.json", "standard", False),
 }
 MAX_HIDDEN = 64
 GATEWAY = "https://ai-gateway.vercel.sh/v1/chat/completions"
 
 LINEUP = [  # Claude and GPT through the subscriptions, Gemini through its API, open models through the gateway
     "claude-cli/claude-sonnet-4-5", "claude-cli/claude-opus-4-5", "claude-cli/claude-opus-5-5", "claude-cli/claude-fable-5-1",
-    "codex-cli/gpt-5", "codex-cli/gpt-5.5", "codex-cli/gpt-6-astra",
-    "gemini-api/gemini-2.5-pro", "gemini-api/gemini-3.1-pro-preview", "gemini-api/gemini-4-argon",
+    "openai/gpt-4o", "codex-cli/gpt-5.6-sol", "codex-cli/gpt-6-sol", "codex-cli/gpt-6-astra",
+    "gemini-api/gemini-3.1-pro-preview", "gemini-api/gemini-4-argon",
     "moonshotai/kimi-k3.1-pro", "deepseek/deepseek-v4-pro", "alibaba/qwen3.8-max", "zai/glm-5.3", "openai/gpt-oss-120b",
 ]
 
@@ -94,20 +97,32 @@ NO_TOOLS = ["Bash", "Edit", "Write", "Read", "Glob", "Grep", "WebFetch", "WebSea
 
 def _gateway(model, text, timeout):
     key = os.environ.get("AI_GATEWAY_API_KEY") or open(".env").read().split("AI_GATEWAY_API_KEY=")[1].split()[0]
-    body = json.dumps({"model": model, "messages": [{"role": "user", "content": text}], "max_tokens": 64000}).encode()
+    # Streamed: long thinking with no bytes on the wire gets the connection dropped.
+    body = json.dumps({"model": model, "messages": [{"role": "user", "content": text}], "max_tokens": 64000,
+                       "stream": True, "stream_options": {"include_usage": True}}).encode()
     req = urllib.request.Request(GATEWAY, body, {"Authorization": f"Bearer {key}", "Content-Type": "application/json"})
+    content, reasoning, usage = [], [], None
     with urllib.request.urlopen(req, timeout=timeout) as r:
-        resp = json.load(r)
-    msg = resp["choices"][0]["message"]
-    return {"reply": msg.get("content") or "", "reasoning": msg.get("reasoning"), "usage": resp.get("usage")}
+        for raw in r:
+            line = raw.decode("utf-8").strip()
+            if not line.startswith("data:") or line == "data: [DONE]":
+                continue
+            chunk = json.loads(line[5:])
+            usage = chunk.get("usage") or usage
+            for ch in chunk.get("choices", []):
+                d = ch.get("delta", {})
+                content.append(d.get("content") or "")
+                reasoning.append(d.get("reasoning") or "")
+    return {"reply": "".join(content), "reasoning": "".join(reasoning) or None, "usage": usage}
 
 
 def _claude_cli(model, text, timeout):
     """Claude Code in print mode with every tool switched off, so it can only answer in text."""
     cmd = ["claude", "-p", "--model", model, "--output-format", "json", "--strict-mcp-config",
            "--disallowedTools", *NO_TOOLS]
+    env = {**os.environ, "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "64000"}  # default cap splits long replies
     r = subprocess.run(cmd, input=text, capture_output=True, text=True, encoding="utf-8", timeout=timeout,
-                       cwd=EMPTY_DIR, shell=os.name == "nt")
+                       cwd=EMPTY_DIR, shell=os.name == "nt", env=env)
     d = json.loads(r.stdout)
     return {"reply": d.get("result") or "", "usage": d.get("usage"), "cost_usd_list_price": d.get("total_cost_usd"),
             "num_turns": d.get("num_turns")}
