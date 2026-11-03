@@ -82,3 +82,23 @@ question type.
 **Process fix:** the earlier Vertex and L4 runs crashed on setup and Vertex reported SUCCEEDED (`| tee` hid the
 exit code). Jobs now use `set -o pipefail`, and a self-check runs every 30 minutes (verify real output, fix,
 relaunch, log).
+
+## 2026-11-03 01:05 (self-check)
+
+**Qwen3.5-9B (1x A100, Vertex) baseline:** largest weight 87%, layer vote 68%, neuron sign 75%, line 14%
+(4B: 68 / 57 / 73 / 23). Reading improves with size on three of four levels.
+
+**Steering, both models (shared direction, pushes -32% to +64%):**
+- Nothing raises the *average* score above baseline beyond noise (4B best 0.558 vs 0.553; 9B best 0.623 vs 0.609).
+- Large pushes along the direction hurt *more* than random pushes of the same size (4B layer 14, +64%: 0.355 vs
+  0.418; 9B layer 18, +64%: 0.407 vs 0.582). So the direction is something the model is sensitive to, not noise,
+  but pushing it either way mostly breaks things.
+- **Candidate:** at layer 22, a small *backward* push raised "which line" in both models: 4B 0.23 -> 0.33
+  (shared direction, -16%) and 0.34 (per-level direction, -16%); 9B 0.14 -> 0.30 (-32%). Same layer, same sign,
+  two models. Caveats: the two 4B numbers use the same test questions, other levels dip slightly, and a shift in
+  answer-letter bias could fake it.
+- **Confirming now** (`confirm.py`): 600 fresh line questions, 5 random directions per strength, and the answer
+  letter counts logged. 4B on the L4 (queued after the per-level sweep), 9B on an A100.
+
+Infra: the 9B Vertex job ran cleanly after the fixes (torch >= 2.6, torchvision removed, jinja2 >= 3.1, pipefail).
+27B and 35B still loading.
