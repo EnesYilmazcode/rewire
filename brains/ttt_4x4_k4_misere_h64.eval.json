@@ -1,0 +1,15 @@
+{
+ "keeps_result": 0.9902,
+ "best_move": 0.9902,
+ "vs_perfect": {
+  "win": 0.0,
+  "draw": 1.0,
+  "loss": 0.001
+ },
+ "vs_random": {
+  "win": 0.5,
+  "draw": 0.499,
+  "loss": 0.0
+ },
+ "params": 4176
+}
