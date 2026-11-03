@@ -40,10 +40,12 @@ def transplant(patient):
 
 def handcoded(variant="standard"):
     rows, b1, votes = [], [], []
+    all_lines = lines(4, 4, variant)
+    L = len(all_lines[0])  # 4 for straight lines, 3 for shapes
     # (whose pieces, how many already on the line, vote for each empty cell on it)
-    plan = [("mine", 3, 1000), ("theirs", 3, 300), ("mine", 2, 6), ("theirs", 2, 4), ("mine", 1, 1)]
+    plan = [("mine", L - 1, 1000), ("theirs", L - 1, 300), ("mine", L - 2, 6), ("theirs", L - 2, 4), ("mine", 1, 1)]
     for who, need, vote in plan:
-        for ln in lines(4, 4, variant):
+        for ln in all_lines:
             w = np.zeros(48)
             own, other = (0, 16) if who == "mine" else (16, 0)
             w[[own + i for i in ln]] = 1.0     # count pieces of this side on the line
@@ -62,8 +64,8 @@ if __name__ == "__main__":
     for task, (patient, variant, _) in TASKS.items():
         t = Table(4, 4, variant)
         refs = {"random": random_brain(), "transplant": transplant(patient), "handcoded_plain_rules": handcoded("standard")}
-        if variant == "nodiag":
-            refs["handcoded_knows_rule"] = handcoded("nodiag")
+        if variant in ("nodiag",) or variant.startswith("shapes_"):
+            refs["handcoded_knows_rule"] = handcoded(variant)
         tag = "" if variant == "standard" else "_" + variant
         f = f"brains/ttt_4x4_k4{tag}_h64.json"
         if os.path.exists(f):

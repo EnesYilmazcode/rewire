@@ -212,5 +212,153 @@
    "hidden": 64,
    "reuse": 0.062
   }
+ },
+ "secret_std": {
+  "random": {
+   "keeps_result": 0.5936,
+   "best_move": 0.5617,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.285,
+    "loss": 0.715
+   },
+   "vs_random": {
+    "win": 0.238,
+    "draw": 0.368,
+    "loss": 0.393
+   },
+   "hidden": 32,
+   "reuse": 0.0
+  },
+  "transplant": {
+   "keeps_result": 0.7148,
+   "best_move": 0.6828,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.354,
+    "loss": 0.646
+   },
+   "vs_random": {
+    "win": 0.479,
+    "draw": 0.306,
+    "loss": 0.214
+   },
+   "hidden": 32,
+   "reuse": 1.0
+  },
+  "handcoded_plain_rules": {
+   "keeps_result": 0.998,
+   "best_move": 0.9978,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 1.0,
+    "loss": 0.0
+   },
+   "vs_random": {
+    "win": 0.965,
+    "draw": 0.035,
+    "loss": 0.0
+   },
+   "hidden": 50,
+   "reuse": 0.0
+  },
+  "trained_h64": {
+   "keeps_result": 0.9965,
+   "best_move": 0.9963,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.998,
+    "loss": 0.002
+   },
+   "vs_random": {
+    "win": 0.563,
+    "draw": 0.437,
+    "loss": 0.0
+   },
+   "hidden": 64,
+   "reuse": 0.125
+  }
+ },
+ "shapes": {
+  "random": {
+   "keeps_result": 0.4471,
+   "best_move": 0.3602,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.0,
+    "loss": 1.0
+   },
+   "vs_random": {
+    "win": 0.399,
+    "draw": 0.001,
+    "loss": 0.601
+   },
+   "hidden": 32,
+   "reuse": 0.0
+  },
+  "transplant": {
+   "keeps_result": 0.7594,
+   "best_move": 0.6948,
+   "vs_perfect": {
+    "win": 0.5,
+    "draw": 0.0,
+    "loss": 0.5
+   },
+   "vs_random": {
+    "win": 0.974,
+    "draw": 0.001,
+    "loss": 0.025
+   },
+   "hidden": 32,
+   "reuse": 1.0
+  },
+  "handcoded_plain_rules": {
+   "keeps_result": 0.5528,
+   "best_move": 0.4635,
+   "vs_perfect": {
+    "win": 0.312,
+    "draw": 0.0,
+    "loss": 0.688
+   },
+   "vs_random": {
+    "win": 0.764,
+    "draw": 0.004,
+    "loss": 0.232
+   },
+   "hidden": 50,
+   "reuse": 0.0
+  },
+  "handcoded_knows_rule": {
+   "keeps_result": 0.9987,
+   "best_move": 0.9979,
+   "vs_perfect": {
+    "win": 0.5,
+    "draw": 0.0,
+    "loss": 0.5
+   },
+   "vs_random": {
+    "win": 0.999,
+    "draw": 0.0,
+    "loss": 0.001
+   },
+   "hidden": 105,
+   "reuse": 0.0
+  },
+  "trained_h64": {
+   "keeps_result": 0.9886,
+   "best_move": 0.9784,
+   "vs_perfect": {
+    "win": 0.0,
+    "draw": 0.0,
+    "loss": 1.0
+   },
+   "vs_random": {
+    "win": 0.984,
+    "draw": 0.0,
+    "loss": 0.016
+   },
+   "hidden": 64,
+   "reuse": 0.0
+  }
  }
 }
