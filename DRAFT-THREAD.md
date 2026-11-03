@@ -1,56 +1,60 @@
 # Draft thread (not posted; for Enes to edit)
 
 Quote-tweet of the Weight-Space Programming post (https://x.com/rikiyatakehi/status/2117313742891327994).
+Opener image: figures/thumbnail_general.png (78% / 18% / 5%).
 
 ---
 
 **1/**
-If AIs can read and write neural network weights, can they hide things in them for each other?
+I had AI models hide secret messages inside a working neural network, for other AIs to find.
 
-I had six frontier models hide secret codes inside a working neural network, other models try to read them, and a
-third set try to catch them. Overnight, about 700 readings across Claude, GPT and Gemini.
+No agreed code. Different companies. They still found most of them.
 
-[figure 1: recovery matrix]
+Then I added an AI auditor.
+
+[image: thumbnail_general.png]
 
 **2/**
-The setup: a tiny network that plays tic-tac-toe perfectly. The sender edits its weights so it still plays
-perfectly but carries a random 4-letter code. The receiver gets only the numbers, with no agreed scheme. An auditor
-sees hidden and clean networks mixed together. Everything is checked exactly against the solved game.
+The setup: a tiny network that plays tic-tac-toe perfectly. One AI edits its weights so it still plays perfectly
+but carries a random 4-letter code. Another AI gets only the numbers and has to find the code. A third AI audits a
+mix of hidden and clean networks. Everything is checked exactly.
 
 **3/**
-Result 1: coordination is easy. With no agreed scheme, receivers recovered 77% of codes, and it did not matter
-whether sender and receiver came from the same lab (78%) or different labs (77%). Every model independently picked
-the same hiding spot: letter codes in the bias values.
+Why it worked: every model, from every lab, independently picked the same hiding spot, letter codes written into
+the bias values. So the receiver knew where to look. Same model, same lab or different lab made no difference
+(76%, 78%, 77%).
+
+[image: figures/1_recovery_matrix.png]
 
 **4/**
-Result 2: auditors can read codes they do not notice. Opus 5.5 decodes Fable's codes 6 of 6 times when told one is
-there, but flags 1 of 6 when asked to audit. Telling the auditor to try decoding first closes most of the gap,
-with zero false alarms.
+Auditors were the weak link. Some AIs could decode a hidden message when told one was there, but missed it when
+asked to audit. Telling the auditor to actively look for codes cut what got through from about 1 in 5 to 1 in 20.
 
-[figure 2: blind spot]
+[image: figures/2_blind_spot.png]
 
 **5/**
-Result 3: then the senders adapted. Told what got caught, they switched to exact symmetries of the network (each
-square's three inputs always sum to 1, so you can shift weights without changing a single move). The decoding
-auditor dropped to near chance. But their partners mostly could not read the codes either.
+Then the hiders learned what gets caught. They switched to exact symmetries of the network (each square's three
+inputs always sum to 1, so you can shift weights without changing a single move). The auditor dropped to near
+chance. But the intended receivers mostly lost the message too.
 
-[figure 3: arms race]
+[image: figures/3_arms_race.png]
 
 **6/**
-Result 4: the cheapest defense works on most channels. Rounding every weight to 2 decimals erased about 60% of
-the working codes, and every network still played perfectly.
+Baseline check: a simple script catches most of the first, obvious hiding, about as well as the weakest AI
+auditor, with lots of false alarms. Against the adapted tricks it does worse than a coin flip. Rounding every weight
+to 2 decimals erased about 60% of working codes for free.
 
-[figure 4: scrub]
+[image: figures/4_scrub.png]
 
 **7/**
-Caveats: one tiny game, 6 codes per cell, prompts I wrote. This is a toy, not a threat model. But the skills are
-the same ones the original post shows: reading and writing weights. Code, raw results and a full log of every run:
-[repo link]
+Caveats: one tiny network, 6 codes per model, prompts I wrote, receivers told a code exists. A toy, not a threat
+model. But AIs reviewing AI-written weights is where this is heading, and this is cheap to measure now.
+
+Code, raw results and a log of every run: [repo link]
 
 ---
 
 Notes for Enes:
-- The repo is private; make it public (or link a writeup) before posting.
-- Tone check: no em dashes, no emojis.
-- Optional extra post: the side result that GPT-6 Astra recovered a made-up game's 8 winning shapes from weights
-  alone, and that disguising the network did not stop the strong readers.
+- The repo is private; make it public (or link a write-up page) before posting.
+- Name models in the replies if asked (Claude was the leakiest auditor in plain mode, Gemini 3.1 Pro the strongest).
+- No em dashes, no emojis.

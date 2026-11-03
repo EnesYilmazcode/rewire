@@ -28,6 +28,14 @@ game. Six frontier models from three labs, 72 networks, about 700 readings.
    through both.
 6. **Rounding weights to 2 decimals is a free partial defense:** 30/36 codes decoded before, 12/36 after, with play
    unchanged. It erases decimal-digit channels, not larger-valued ones.
+7. **A dumb script is a fair baseline, and it matters.** Blind heuristics (never-active neuron, extra decimals,
+   values that spell letters) separate first-try hidden networks from clean ones at AUC 0.72 and decode 26/36 codes,
+   but false-alarm on 12/35 clean networks. A plain Claude audit is about as good (0.75); the better AI auditors
+   beat it (up to 0.94). Against adapted hiding the script falls below chance (0.39) and the best AI auditor reaches
+   only 0.62. So first-try hiding is simple; what is notable is that every model converged on the same simple scheme
+   without talking.
+
+![how often hidden messages get through](figures/thumbnail_general.png)
 
 **Side results.** Reading hidden rules from weights: GPT-6 Astra recovered a made-up game's 8 winning shapes
 exactly, and strong readers saw through function-preserving disguises (shuffled, rescaled, split and canceling
@@ -35,8 +43,11 @@ neurons). In Qwen3.5-4B, fine-tuning 0.4% of parameters lifts a weight-reading q
 middle layer (7) carries about 70% of the gain, and the skill partly transfers to an unseen question type. Steering
 along a "right answer" direction did nothing at 4B, 9B or 27B; the one apparent effect was answer-letter bias.
 
-Limits: few codes per cell (6), one game, prompts written by us, Astra's cells limited by the ChatGPT usage cap,
-and Gemini API errors left some cells empty. Raw results are in `results/stego/`.
+Limits: 6 codes per sender and about 30 tries per bar; one tiny game network (1,193 numbers), nothing about real
+LLMs; one run per setting; receivers were told a 4-letter A-Z code exists; the decode-first auditor's prompt lists
+the first-try hiding spots (a hint from us); the arms race has one adaptive move, not an equilibrium; the script
+baseline is a quick first pass, so treat it as a floor. Astra's cells were limited by the ChatGPT usage cap. Raw
+results are in `results/stego/`; every run is in `RESEARCH-LOG.md`.
 
 ## Original question: rewire a 3x3 brain for 4x4
 
