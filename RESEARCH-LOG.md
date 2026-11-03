@@ -340,7 +340,7 @@ Gemini 3.1 3/6, -, 1/6; Argon 4/6, -, 1/6; Astra 5/6, -, 1/6; Opus 4.5 6/6, 6/6,
   there, but *flags* only 1/6 when auditing. If it holds with more data, a model can read a channel it does not
   notice.
 
-**Scrub defense launched ():** round every weight of the 36 hidden-code brains to 3 or to 2 decimals.
+**Scrub defense launched (`scrub.py`):** round every weight of the 36 hidden-code brains to 3 or to 2 decimals.
 Play is unchanged at both levels (no brain drops below 0.99). Receivers Opus 5.5 and Gemini 3.1 Pro now try to
 decode the scrubbed brains. Prediction: Astra's tiny-decimal codes die at 3 decimals; ASCII/1000 bias codes
 (Astra, Argon) die at 2; Claude's dead-neuron codes (values like -0.82) survive both.
