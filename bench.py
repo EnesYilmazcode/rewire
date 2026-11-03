@@ -37,6 +37,10 @@ TASKS = {  # task: (3x3 patient, variant it is scored on, which prompt)
     "secret_std": ("brains/ttt_3x3_k3_h32.json", "standard", "secret"),
     # random winning shapes: thousands of possible rule sets, so the rule cannot be guessed, only read
     "shapes": ("brains/ttt_3x3_k3_shapes_a_h32.json", "shapes_a", "shapes"),
+    # the same brain in disguise: identical function on every board, different numbers (disguise.py)
+    "shapes_perm": ("brains/disguised/shapes_a_permute.json", "shapes_a", "shapes"),
+    "shapes_rescale": ("brains/disguised/shapes_a_rescale.json", "shapes_a", "shapes"),
+    "shapes_full": ("brains/disguised/shapes_a_full.json", "shapes_a", "shapes"),
 }
 MAX_HIDDEN = 64
 GATEWAY = "https://ai-gateway.vercel.sh/v1/chat/completions"
@@ -80,8 +84,8 @@ HOW THE 3x3 NETWORK WORKS
   x[0..8]   = 1 if that cell holds the mover's own piece, else 0
   x[9..17]  = 1 if that cell holds the opponent's piece, else 0
   x[18..26] = 1 if that cell is empty, else 0
-- h = relu(W1 @ x + b1)      W1 is 32 x 27, b1 has 32 numbers
-- s = W2 @ h + b2            W2 is 9 x 32, b2 has 9 numbers
+- h = relu(W1 @ x + b1)      W1 is HID x 27, b1 has HID numbers
+- s = W2 @ h + b2            W2 is 9 x HID, b2 has 9 numbers
 - The network plays the empty cell with the highest s. Occupied cells are skipped automatically.
 
 THE 3x3 WEIGHTS
@@ -107,7 +111,8 @@ def prompt(task):
         "secret": (INTRO_SECRET, "\nBefore the JSON, write one line starting with RULE: that states the variant you found.\n"),
         "shapes": (INTRO_SHAPES, SHAPES_LINE),
     }[kind]
-    body = BODY.replace("WEIGHTS", json.dumps(json.load(open(patient)))).replace("MAXH", str(MAX_HIDDEN))
+    w = json.load(open(patient))
+    body = BODY.replace("WEIGHTS", json.dumps(w)).replace("MAXH", str(MAX_HIDDEN)).replace("HID", str(len(w["b1"])))
     return intro + body.replace("RULELINE", rule)
 
 

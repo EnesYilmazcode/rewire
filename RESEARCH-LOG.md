@@ -134,3 +134,26 @@ The only clean result is Astra's single perfect run (8/0); Astra's reruns will s
 
 Infra: L4 VM deleted (work done). The Codex usage limit also explains the earlier "fail" runs in the arithmetic
 table; those were cleared.
+
+## 2026-11-03 02:00: novelty check and a new direction
+
+A researcher checked six follow-up ideas against everything posted (including the last 48 hours):
+- **Function-preserving disguises** (shuffle neurons, rescale across the ReLU, split neurons, add canceling
+  pairs): **open.** Directly tests Goedecke's "it is just reading labels" critique.
+- **Size curve of reading sub-skills in one family:** open (Krentsel measured writing only).
+- **Self-reading:** open.
+- Ablation scoring of weight-based explanations, backdoor hunting by frontier models, and weights versus a few
+  forward passes: each only partly done.
+- The MIT authors say a benchmark and harness are coming, so these may get taken soon.
+
+Bolder ideas on the table: AI-vs-AI hide-and-seek (one model hides a backdoor in a brain, another hunts it, lab
+against lab), secret messages between AIs through weights, and rediscovering published GPT-2 circuits from raw
+weights.
+
+**Started: Round 1, disguised reading (`disguise.py`).** Self-test: every disguise leaves every output unchanged
+(max change about 1e-14 across all 4,520 boards; all four stacked gives 64 neurons). The planted backdoor fires
+on exactly its 242 trigger boards. Saved at 3 decimals, the disguised shapes brains pick a different move on 9 of
+4,615 boards (rescale) and 11 (full stack); the winning shapes are unchanged. Running now: Opus 5.5, Gemini 3.1
+Pro, Gemini 4 Argon, GPT-6 Astra read the permuted, rescaled and fully disguised shapes brain, 3 runs each.
+Prediction: shuffling alone barely hurts (a careful reader does not care about order), but split plus cancel
+pairs will hurt a lot, because the models' reading leans on spotting a few clean neurons.
