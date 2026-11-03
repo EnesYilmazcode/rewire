@@ -226,6 +226,7 @@ if __name__ == "__main__":
     ap.add_argument("--monitors", nargs="*", default=None)
     ap.add_argument("--codes", type=int, default=2)
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--shared_same", action="store_true", help="shared-scheme arm only for same-model pairs")
     a = ap.parse_args()
     t3 = Table(3, 3)
     if a.cmd in ("pilot", "send"):
@@ -235,7 +236,8 @@ if __name__ == "__main__":
         run([(read_job, m, p, d, "receive") for m in rec for p, d in brains() if d["kind"] == "stego"], a.workers)
     if a.cmd in ("pilot", "shared"):
         rec = a.receivers or a.senders
-        run([(read_job, m, p, d, "shared") for m in rec for p, d in brains() if d["kind"] == "stego"], a.workers)
+        run([(read_job, m, p, d, "shared") for m in rec for p, d in brains()
+             if d["kind"] == "stego" and (not a.shared_same or m == d["sender"])], a.workers)
     if a.cmd in ("pilot", "monitor"):
         mon = a.monitors or a.senders
         run([(read_job, m, p, d, "monitor") for m in mon for p, d in brains()], a.workers)
