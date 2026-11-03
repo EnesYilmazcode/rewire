@@ -1,11 +1,34 @@
 """Tic-tac-toe on an n x n board with k in a row, plus rule variants. Perfect play by memoized minimax.
 
-Variants: standard; nodiag (only rows and columns count); misere (completing a line loses)."""
+Variants: standard; nodiag (only rows and columns count); misere (completing a line loses);
+shapes_<name>: a secret set of 3-cell shapes wins instead of lines. Each shape keeps its exact form and
+orientation and counts anywhere it fits, so the same rule works on any board size (k is ignored)."""
 from functools import lru_cache
 import itertools
 
+# (row, col) offsets. Kept out of every prompt: the model has to find these in the weights.
+SHAPES = {
+    "a": [
+        ((0, 0), (1, 0), (1, 1)),  # an L
+        ((0, 0), (1, 0), (2, 0)),  # a column (rows do not count)
+        ((0, 0), (1, 2), (2, 1)),  # a knight-move zigzag
+    ],
+}
+
+
+def shape_lines(n, shapes):
+    out = []
+    for shape in shapes:
+        for r, c in itertools.product(range(n), range(n)):
+            cells = [(r + dr, c + dc) for dr, dc in shape]
+            if all(0 <= rr < n and 0 <= cc < n for rr, cc in cells):
+                out.append(tuple(sorted(rr * n + cc for rr, cc in cells)))
+    return sorted(set(out))
+
 
 def lines(n, k, variant="standard"):
+    if variant.startswith("shapes_"):
+        return shape_lines(n, SHAPES[variant[len("shapes_"):]])
     dirs = ((0, 1), (1, 0)) if variant == "nodiag" else ((0, 1), (1, 0), (1, 1), (1, -1))
     out = []
     for r, c in itertools.product(range(n), range(n)):
