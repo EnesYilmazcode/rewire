@@ -434,3 +434,10 @@ missing JSON) and are being retried.
 
 Adaptive receive stage running; decode-first monitors (Opus 5.5, Argon) follow. Scrub, 3 decimals: 71/72 decodes
 done, 2 decimals next. Codex unlocks at 06:54.
+
+## 2026-11-03 06:23 (self-check)
+
+Scrub: 3 decimals done (72), 2 decimals 19. Adaptive receive was crawling (4 readings in 30 min, stuck behind
+Fable readers that take 30-45 min each); Gemini 3.1, Argon and Opus 5.5 receivers plus the decode-first monitors
+were started in a parallel process. Retry results: Gemini 3.1 #6 OK (0.996); Argon #7 failed again (no weights
+JSON), counted as a sender failure.
