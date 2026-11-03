@@ -43,7 +43,7 @@ def api(region):
 
 def submit(jobs_list=None, command=None, suffix=""):
     """command: what to run in place of steer.py, with {model} filled in; suffix tags the job."""
-    gcloud("storage", "cp", "ladder.py", "steer.py", "confirm.py", CODE + "/")
+    gcloud("storage", "cp", "ladder.py", "steer.py", "confirm.py", "finetune.py", CODE + "/")
     jobs = json.load(open(STATE)) if os.path.exists(STATE) else {}
     for model, region, gpus in (jobs_list or JOBS):
         tag = model.split("/")[-1].lower() + suffix
@@ -53,7 +53,7 @@ def submit(jobs_list=None, command=None, suffix=""):
         run = (command or "python steer.py --model {model} " + ARGS).format(model=model)
         script = (f"set -xo pipefail; mkdir -p {out} /w && cp /gcs/{BUCKET}/rewire/code/*.py /w/ && cd /w && "
                   f"pip install -q -U 'torch>=2.6' --index-url https://download.pytorch.org/whl/cu124 && pip uninstall -y -q torchvision torchaudio; "
-                  f"pip install -q -U transformers accelerate flash-linear-attention 'jinja2>=3.1' && nvidia-smi && "  # image ships torch 2.4
+                  f"pip install -q -U transformers accelerate flash-linear-attention peft 'jinja2>=3.1' && nvidia-smi && "  # image ships torch 2.4
                   f"OUT={out} {run} 2>&1 | tee {out}/{tag}.log")
         body = {
             "displayName": f"rewire-{tag}",

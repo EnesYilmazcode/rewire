@@ -23,7 +23,7 @@ def predict(tok, model, its, batch=8):
     for s in range(0, len(its), batch):
         chunk = its[s:s + batch]
         enc = tok([steer.render(tok, q) for q, _, _ in chunk], return_tensors="pt", padding=True).to("cuda")
-        logits = model(**enc).logits[:, -1].float()
+        logits = model(**enc, logits_to_keep=1).logits[:, -1].float()
         for k, (_, opts, _) in enumerate(chunk):
             preds.append(int(logits[k, steer.option_ids(tok, opts)].argmax()))
     return preds

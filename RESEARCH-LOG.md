@@ -102,3 +102,35 @@ relaunch, log).
 
 Infra: the 9B Vertex job ran cleanly after the fixes (torch >= 2.6, torchvision removed, jinja2 >= 3.1, pipefail).
 27B and 35B still loading.
+
+## 2026-11-03 01:40 (self-check)
+
+**The layer-22 "line" effect is a letter-bias artifact. Killed.** On 600 fresh line questions with 5 random controls
+and answer counts logged:
+- Qwen 9B answers "G" on **all 600** line questions at baseline (13.5% = how often G is right). Backward pushes
+  move some answers to "E", and the score moves by luck (0.135 -> 0.22 at -48%). Random pushes never move it.
+- Qwen 4B splits between D and G at baseline (0.207). A -16% push moves the mix toward E (0.263), and -32% makes it
+  answer E almost always (0.112).
+- So the direction controls *which letter the model defaults to* on questions it cannot answer. It is not reading.
+
+**Scale curve for the ladder** (test accuracy: largest weight / which line / neuron sign / layer vote):
+0.8B ~chance everywhere; 4B 68/23/73/57; 9B 87/14/75/68; 27B 97/53/67/75; 35B-A3B (MoE, 3B active) 93/16/60/67.
+"Which line" only appears at 27B (9B and 35B-A3B are at chance and pick one letter). 35B-A3B, with only 3B active
+parameters per token, reads like 9B, not like 27B.
+
+**Steering on 27B (per-level directions, pushes -32 to +64%):** best +2.2 points (0.752 vs 0.730), noise across
+about 25 settings. **Steering along right-minus-wrong does not improve reading at 4B, 9B or 27B.**
+
+**Next approach, running (`finetune.py`, 2x A100):** LoRA-train Qwen 4B's MLPs on ladder questions, score fresh
+questions, then turn the trained change on one layer at a time to see where the skill lives. One run trains on all
+four question types; the other holds out "which line" to test transfer to an unpracticed type. A local 0.8B smoke
+test passed end to end (only last-token logits now, which also cut memory use on every script).
+
+**Part 1 shapes repeats: much noisier than the single runs suggested.** Right/wrong per run:
+Gemini 3.1 Pro 7/0, 7/15, 4/0; Opus 5.5 3/3, 7/4, 7/8; Argon 3/4, 3/4, 7/0; Sonnet 4.5 0/4, 3/5, 6/3;
+Opus 4.5 5/8, none, 3/4; Astra 8/0 then two runs lost to the ChatGPT usage limit (resets 01:48, rerun queued);
+Fable 5.1 exceeded the 64k output cap on every attempt. **The model ranking from one run per model does not hold.**
+The only clean result is Astra's single perfect run (8/0); Astra's reruns will show whether it is stable.
+
+Infra: L4 VM deleted (work done). The Codex usage limit also explains the earlier "fail" runs in the arithmetic
+table; those were cleared.

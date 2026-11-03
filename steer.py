@@ -58,7 +58,7 @@ def run(tok, model, its, batch=8, want_hidden=False):
     for s in range(0, len(its), batch):
         chunk = its[s:s + batch]
         enc = tok([render(tok, q) for q, _, _ in chunk], return_tensors="pt", padding=True).to("cuda")
-        out = model(**enc, output_hidden_states=want_hidden)
+        out = model(**enc, output_hidden_states=want_hidden, logits_to_keep=1)
         logits = out.logits[:, -1].float()
         for k, (_, opts, ans) in enumerate(chunk):
             ids = option_ids(tok, opts)
