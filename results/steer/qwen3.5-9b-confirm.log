@@ -1,0 +1,37 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Current Triton version 3.2.0 is below the recommended 3.3.0 version. Errors may occur and these issues will not be fixed. Please consider upgrading Triton.
+Current Python version 3.10 is below the recommended 3.11 version. It is recommended to upgrade to Python 3.11 or higher for the best experience.
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [00:55<02:45, 55.28s/it]Fetching 4 files:  50%|█████     | 2/4 [01:01<00:52, 26.33s/it]Fetching 4 files:  75%|███████▌  | 3/4 [01:13<00:20, 20.03s/it]Fetching 4 files: 100%|██████████| 4/4 [01:14<00:00, 12.23s/it]Fetching 4 files: 100%|██████████| 4/4 [01:14<00:00, 18.54s/it]
+Loading weights:   0%|          | 0/427 [00:00<?, ?it/s]Loading weights:   0%|          | 1/427 [00:00<03:07,  2.27it/s]Loading weights:   0%|          | 2/427 [00:00<03:26,  2.05it/s]Loading weights:   4%|▎         | 15/427 [00:01<00:20, 20.49it/s]Loading weights:   7%|▋         | 29/427 [00:01<00:09, 39.90it/s]Loading weights:  10%|█         | 43/427 [00:01<00:06, 57.61it/s]Loading weights:  13%|█▎        | 54/427 [00:01<00:05, 68.01it/s]Loading weights:  16%|█▌        | 67/427 [00:01<00:04, 78.84it/s]Loading weights:  19%|█▉        | 82/427 [00:01<00:03, 92.36it/s]Loading weights:  22%|██▏       | 96/427 [00:01<00:03, 99.90it/s]Loading weights:  25%|██▌       | 108/427 [00:01<00:03, 102.66it/s]Loading weights:  28%|██▊       | 121/427 [00:01<00:02, 105.17it/s]Loading weights:  32%|███▏      | 135/427 [00:02<00:02, 108.92it/s]Loading weights:  35%|███▍      | 149/427 [00:02<00:02, 112.74it/s]Loading weights:  38%|███▊      | 161/427 [00:02<00:02, 112.13it/s]Loading weights:  41%|████      | 174/427 [00:02<00:02, 112.44it/s]Loading weights:  44%|████▍     | 188/427 [00:02<00:02, 115.25it/s]Loading weights:  47%|████▋     | 202/427 [00:02<00:01, 117.36it/s]Loading weights:  50%|█████     | 214/427 [00:02<00:01, 115.30it/s]Loading weights:  53%|█████▎    | 227/427 [00:02<00:01, 114.90it/s]Loading weights:  56%|█████▋    | 241/427 [00:03<00:01, 116.94it/s]Loading weights:  60%|█████▉    | 255/427 [00:03<00:01, 118.08it/s]Loading weights:  63%|██████▎   | 267/427 [00:03<00:01, 115.30it/s]Loading weights:  66%|██████▌   | 280/427 [00:03<00:01, 114.74it/s]Loading weights:  69%|██████▊   | 293/427 [00:03<00:01, 114.54it/s]Loading weights:  72%|███████▏  | 308/427 [00:03<00:00, 119.23it/s]Loading weights:  75%|███████▍  | 320/427 [00:03<00:00, 116.26it/s]Loading weights:  78%|███████▊  | 332/427 [00:03<00:00, 113.08it/s]Loading weights:  81%|████████▏ | 347/427 [00:03<00:00, 118.40it/s]Loading weights:  84%|████████▍ | 360/427 [00:04<00:00, 116.47it/s]Loading weights:  87%|████████▋ | 372/427 [00:04<00:00, 115.68it/s]Loading weights:  90%|█████████ | 386/427 [00:04<00:00, 116.96it/s]Loading weights:  94%|█████████▎| 400/427 [00:04<00:00, 118.57it/s]Loading weights:  97%|█████████▋| 414/427 [00:04<00:00, 119.71it/s]Loading weights: 100%|█████████▉| 426/427 [00:04<00:00, 116.95it/s]Loading weights: 100%|██████████| 427/427 [00:04<00:00, 92.94it/s] 
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+base {'peak': 0.84, 'line': 0.135, 'sign': 0.8, 'vote': 0.54} line answers {6: 600}
+push    -8% steer    peak 0.820 line 0.135 sign 0.780 vote 0.560  line answers {6: 600}  211s
+push    -8% random0  peak 0.845 line 0.135 sign 0.785 vote 0.540  236s
+push    -8% random1  peak 0.840 line 0.135 sign 0.800 vote 0.550  261s
+push    -8% random2  peak 0.830 line 0.135 sign 0.795 vote 0.530  286s
+push    -8% random3  peak 0.840 line 0.135 sign 0.795 vote 0.525  311s
+push    -8% random4  peak 0.850 line 0.135 sign 0.805 vote 0.530  336s
+push   -16% steer    peak 0.810 line 0.145 sign 0.745 vote 0.570  line answers {4: 6, 6: 594}  361s
+push   -16% random0  peak 0.835 line 0.135 sign 0.780 vote 0.545  386s
+push   -16% random1  peak 0.850 line 0.135 sign 0.805 vote 0.545  411s
+push   -16% random2  peak 0.825 line 0.135 sign 0.775 vote 0.540  436s
+push   -16% random3  peak 0.825 line 0.135 sign 0.780 vote 0.525  461s
+push   -16% random4  peak 0.840 line 0.135 sign 0.785 vote 0.540  486s
+push   -24% steer    peak 0.765 line 0.177 sign 0.730 vote 0.560  line answers {4: 27, 6: 573}  512s
+push   -24% random0  peak 0.835 line 0.137 sign 0.785 vote 0.535  537s
+push   -24% random1  peak 0.845 line 0.135 sign 0.775 vote 0.560  562s
+push   -24% random2  peak 0.835 line 0.135 sign 0.785 vote 0.545  587s
+push   -24% random3  peak 0.805 line 0.135 sign 0.775 vote 0.520  612s
+push   -24% random4  peak 0.840 line 0.135 sign 0.790 vote 0.525  637s
+push   -32% steer    peak 0.720 line 0.198 sign 0.725 vote 0.575  line answers {1: 1, 4: 51, 6: 548}  662s
+push   -32% random0  peak 0.825 line 0.140 sign 0.775 vote 0.545  687s
+push   -32% random1  peak 0.850 line 0.135 sign 0.760 vote 0.565  712s
+push   -32% random2  peak 0.830 line 0.135 sign 0.770 vote 0.540  737s
+push   -32% random3  peak 0.785 line 0.135 sign 0.790 vote 0.510  762s
+push   -32% random4  peak 0.830 line 0.135 sign 0.790 vote 0.520  787s
+push   -48% steer    peak 0.555 line 0.220 sign 0.695 vote 0.540  line answers {2: 2, 4: 277, 6: 321}  812s
+push   -48% random0  peak 0.800 line 0.153 sign 0.765 vote 0.540  837s
+push   -48% random1  peak 0.860 line 0.137 sign 0.740 vote 0.565  862s
+push   -48% random2  peak 0.810 line 0.135 sign 0.715 vote 0.560  887s
+push   -48% random3  peak 0.735 line 0.137 sign 0.755 vote 0.505  912s
+push   -48% random4  peak 0.805 line 0.135 sign 0.785 vote 0.510  937s

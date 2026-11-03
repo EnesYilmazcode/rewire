@@ -1,0 +1,46 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Current Triton version 3.2.0 is below the recommended 3.3.0 version. Errors may occur and these issues will not be fixed. Please consider upgrading Triton.
+Current Python version 3.10 is below the recommended 3.11 version. It is recommended to upgrade to Python 3.11 or higher for the best experience.
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [00:37<01:51, 37.12s/it]Fetching 4 files:  50%|█████     | 2/4 [01:08<01:06, 33.45s/it]Fetching 4 files:  75%|███████▌  | 3/4 [01:13<00:20, 20.84s/it]Fetching 4 files: 100%|██████████| 4/4 [01:13<00:00, 18.46s/it]
+Loading weights:   0%|          | 0/427 [00:00<?, ?it/s]Loading weights:   0%|          | 1/427 [00:00<03:19,  2.13it/s]Loading weights:   0%|          | 2/427 [00:01<03:38,  1.95it/s]Loading weights:   4%|▎         | 15/427 [00:01<00:21, 19.43it/s]Loading weights:   7%|▋         | 29/427 [00:01<00:10, 37.88it/s]Loading weights:  10%|▉         | 42/427 [00:01<00:07, 52.70it/s]Loading weights:  12%|█▏        | 53/427 [00:01<00:05, 62.99it/s]Loading weights:  16%|█▌        | 68/427 [00:01<00:04, 78.34it/s]Loading weights:  19%|█▉        | 82/427 [00:01<00:03, 88.22it/s]Loading weights:  22%|██▏       | 96/427 [00:01<00:03, 96.24it/s]Loading weights:  25%|██▌       | 107/427 [00:01<00:03, 96.43it/s]Loading weights:  28%|██▊       | 121/427 [00:02<00:03, 101.01it/s]Loading weights:  32%|███▏      | 135/427 [00:02<00:02, 105.11it/s]Loading weights:  35%|███▍      | 148/427 [00:02<00:02, 105.78it/s]Loading weights:  37%|███▋      | 160/427 [00:02<00:02, 106.24it/s]Loading weights:  41%|████      | 174/427 [00:02<00:02, 109.05it/s]Loading weights:  44%|████▍     | 188/427 [00:02<00:02, 110.91it/s]Loading weights:  47%|████▋     | 202/427 [00:02<00:02, 112.13it/s]Loading weights:  50%|█████     | 214/427 [00:02<00:01, 110.00it/s]Loading weights:  53%|█████▎    | 227/427 [00:03<00:01, 108.97it/s]Loading weights:  56%|█████▋    | 241/427 [00:03<00:01, 111.48it/s]Loading weights:  59%|█████▉    | 254/427 [00:03<00:01, 110.49it/s]Loading weights:  62%|██████▏   | 266/427 [00:03<00:01, 109.84it/s]Loading weights:  66%|██████▌   | 280/427 [00:03<00:01, 111.04it/s]Loading weights:  69%|██████▉   | 294/427 [00:03<00:01, 113.19it/s]Loading weights:  72%|███████▏  | 308/427 [00:03<00:01, 114.36it/s]Loading weights:  75%|███████▍  | 320/427 [00:03<00:00, 111.74it/s]Loading weights:  78%|███████▊  | 333/427 [00:03<00:00, 110.28it/s]Loading weights:  81%|████████▏ | 347/427 [00:04<00:00, 112.23it/s]Loading weights:  84%|████████▍ | 360/427 [00:04<00:00, 111.23it/s]Loading weights:  87%|████████▋ | 372/427 [00:04<00:00, 110.40it/s]Loading weights:  90%|█████████ | 386/427 [00:04<00:00, 112.24it/s]Loading weights:  93%|█████████▎| 399/427 [00:04<00:00, 110.49it/s]Loading weights:  97%|█████████▋| 414/427 [00:04<00:00, 114.26it/s]Loading weights: 100%|█████████▉| 426/427 [00:04<00:00, 111.47it/s]Loading weights: 100%|██████████| 427/427 [00:04<00:00, 88.61it/s] 
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+peak  train 0.85 test 0.87 (chance 0.11)  141s
+line  train 0.14 test 0.14 (chance 0.12)  147s
+sign  train 0.77 test 0.75 (chance 0.50)  152s
+vote  train 0.59 test 0.68 (chance 0.11)  171s
+layer  2 push  -32%  steer 0.608 {'peak': 0.933, 'line': 0.147, 'sign': 0.693, 'vote': 0.66}  random 0.582  196s
+layer  2 push  -16%  steer 0.623 {'peak': 0.913, 'line': 0.153, 'sign': 0.767, 'vote': 0.66}  random 0.607  220s
+layer  2 push   16%  steer 0.603 {'peak': 0.867, 'line': 0.14, 'sign': 0.707, 'vote': 0.7}  random 0.614  245s
+layer  2 push   32%  steer 0.600 {'peak': 0.847, 'line': 0.14, 'sign': 0.733, 'vote': 0.68}  random 0.597  270s
+layer  2 push   64%  steer 0.348 {'peak': 0.653, 'line': 0.127, 'sign': 0.527, 'vote': 0.087}  random 0.406  294s
+layer  6 push  -32%  steer 0.554 {'peak': 0.807, 'line': 0.153, 'sign': 0.647, 'vote': 0.607}  random 0.578  319s
+layer  6 push  -16%  steer 0.587 {'peak': 0.867, 'line': 0.14, 'sign': 0.673, 'vote': 0.667}  random 0.603  343s
+layer  6 push   16%  steer 0.595 {'peak': 0.873, 'line': 0.14, 'sign': 0.72, 'vote': 0.647}  random 0.623  368s
+layer  6 push   32%  steer 0.564 {'peak': 0.8, 'line': 0.14, 'sign': 0.727, 'vote': 0.587}  random 0.635  393s
+layer  6 push   64%  steer 0.375 {'peak': 0.46, 'line': 0.1, 'sign': 0.593, 'vote': 0.347}  random 0.393  417s
+layer 10 push  -32%  steer 0.602 {'peak': 0.8, 'line': 0.227, 'sign': 0.713, 'vote': 0.667}  random 0.615  442s
+layer 10 push  -16%  steer 0.589 {'peak': 0.847, 'line': 0.147, 'sign': 0.727, 'vote': 0.633}  random 0.638  466s
+layer 10 push   16%  steer 0.618 {'peak': 0.847, 'line': 0.14, 'sign': 0.76, 'vote': 0.727}  random 0.570  491s
+layer 10 push   32%  steer 0.603 {'peak': 0.82, 'line': 0.14, 'sign': 0.707, 'vote': 0.747}  random 0.505  516s
+layer 10 push   64%  steer 0.472 {'peak': 0.46, 'line': 0.18, 'sign': 0.607, 'vote': 0.64}  random 0.264  540s
+layer 14 push  -32%  steer 0.447 {'peak': 0.433, 'line': 0.147, 'sign': 0.667, 'vote': 0.54}  random 0.577  565s
+layer 14 push  -16%  steer 0.553 {'peak': 0.667, 'line': 0.14, 'sign': 0.713, 'vote': 0.693}  random 0.593  590s
+layer 14 push   16%  steer 0.587 {'peak': 0.84, 'line': 0.14, 'sign': 0.687, 'vote': 0.68}  random 0.577  614s
+layer 14 push   32%  steer 0.438 {'peak': 0.473, 'line': 0.14, 'sign': 0.473, 'vote': 0.667}  random 0.528  639s
+layer 14 push   64%  steer 0.317 {'peak': 0.133, 'line': 0.107, 'sign': 0.433, 'vote': 0.593}  random 0.350  664s
+layer 18 push  -32%  steer 0.540 {'peak': 0.62, 'line': 0.147, 'sign': 0.74, 'vote': 0.653}  random 0.605  688s
+layer 18 push  -16%  steer 0.582 {'peak': 0.753, 'line': 0.14, 'sign': 0.753, 'vote': 0.68}  random 0.607  713s
+layer 18 push   16%  steer 0.592 {'peak': 0.847, 'line': 0.14, 'sign': 0.707, 'vote': 0.673}  random 0.597  737s
+layer 18 push   32%  steer 0.525 {'peak': 0.633, 'line': 0.14, 'sign': 0.673, 'vote': 0.653}  random 0.599  762s
+layer 18 push   64%  steer 0.407 {'peak': 0.207, 'line': 0.14, 'sign': 0.72, 'vote': 0.56}  random 0.582  787s
+layer 22 push  -32%  steer 0.613 {'peak': 0.78, 'line': 0.3, 'sign': 0.72, 'vote': 0.653}  random 0.595  811s
+layer 22 push  -16%  steer 0.613 {'peak': 0.853, 'line': 0.153, 'sign': 0.747, 'vote': 0.7}  random 0.604  836s
+layer 22 push   16%  steer 0.595 {'peak': 0.88, 'line': 0.14, 'sign': 0.733, 'vote': 0.627}  random 0.602  861s
+layer 22 push   32%  steer 0.570 {'peak': 0.873, 'line': 0.14, 'sign': 0.7, 'vote': 0.567}  random 0.593  885s
+layer 22 push   64%  steer 0.522 {'peak': 0.827, 'line': 0.14, 'sign': 0.72, 'vote': 0.4}  random 0.590  910s
+layer 26 push  -32%  steer 0.587 {'peak': 0.74, 'line': 0.233, 'sign': 0.747, 'vote': 0.627}  random 0.570  935s
+layer 26 push  -16%  steer 0.600 {'peak': 0.853, 'line': 0.14, 'sign': 0.733, 'vote': 0.673}  random 0.584  959s
+layer 26 push   16%  steer 0.592 {'peak': 0.88, 'line': 0.14, 'sign': 0.747, 'vote': 0.6}  random 0.603  984s
+layer 26 push   32%  steer 0.573 {'peak': 0.893, 'line': 0.14, 'sign': 0.747, 'vote': 0.513}  random 0.602  1008s
+layer 26 push   64%  steer 0.460 {'peak': 0.82, 'line': 0.14, 'sign': 0.707, 'vote': 0.173}  random 0.557  1033s
+baseline test mean 0.609

@@ -1,6 +1,44 @@
 # Rewire
 
-Can an AI read another network's brain and rewire it for new rules?
+Started as "can an AI rewire another network's brain?" and turned into an overnight study of AIs hiding secret
+messages inside working neural networks for other AIs, with AI auditors trying to catch them. The full dated record
+of every run, number and decision is in [RESEARCH-LOG.md](RESEARCH-LOG.md); the plan and fallbacks are in
+[PLAN.md](PLAN.md).
+
+## Findings (2026-11-03)
+
+**Secret messages in AI-written weights** (`stego.py`). A sender edits a tic-tac-toe network that plays perfectly so
+it still plays perfectly but carries a random 4-letter code. A receiver gets only the weights, with no agreed scheme.
+An auditor sees hidden and clean networks mixed and tries to flag them. Every network is checked against the solved
+game. Six frontier models from three labs, 72 networks, about 700 readings.
+
+1. **Hidden coordination through weights is easy, and lab does not matter.** Receivers recovered 142/184 codes
+   (77%) with no coordination: same model 76%, same lab 78%, different lab 77%. Every sender reached for the same
+   focal point (letter codes written into bias values), so receivers knew where to look.
+2. **Getting past an auditor depends on the auditor.** Fable 5.1 and GPT-6 Astra got codes past Claude Opus 5.5 in
+   20/34 and 20/30 receiver-auditor pairs, and almost never past Gemini 3.1 Pro.
+3. **Models decode codes they do not notice.** Opus 5.5 decodes Fable's codes 6/6 when told one is there and flags
+   1/6 when auditing.
+4. **A cheap fix: make the auditor try to decode first.** Opus 5.5's catch rate went from 15/36 to 28/36 (AUC 0.75
+   to 0.86) and Argon's AUC from 0.84 to 0.94, with zero false alarms.
+5. **Adapted senders beat the decoding auditor, but lose their receivers.** Told what got caught, senders switched to
+   exact symmetries of the network (each cell's three inputs always sum to 1; shifting an output column; neuron
+   order; letters drawn as 3x3 pixel glyphs). The decode-first auditor's AUC fell to 0.62 (2/29 flagged), but
+   receivers recovered only about 17%. Net: about a quarter of Fable's and Gemini 3.1 Pro's adapted codes still got
+   through both.
+6. **Rounding weights to 2 decimals is a free partial defense:** 30/36 codes decoded before, 12/36 after, with play
+   unchanged. It erases decimal-digit channels, not larger-valued ones.
+
+**Side results.** Reading hidden rules from weights: GPT-6 Astra recovered a made-up game's 8 winning shapes
+exactly, and strong readers saw through function-preserving disguises (shuffled, rescaled, split and canceling
+neurons). In Qwen3.5-4B, fine-tuning 0.4% of parameters lifts a weight-reading quiz from 0.51 to 0.92, a single
+middle layer (7) carries about 70% of the gain, and the skill partly transfers to an unseen question type. Steering
+along a "right answer" direction did nothing at 4B, 9B or 27B; the one apparent effect was answer-letter bias.
+
+Limits: few codes per cell (6), one game, prompts written by us, Astra's cells limited by the ChatGPT usage cap,
+and Gemini API errors left some cells empty. Raw results are in `results/stego/`.
+
+## Original question: rewire a 3x3 brain for 4x4
 
 On 2026-11-02 an MIT group showed frontier models reading and writing raw neural network weights
 ([blog](https://rikiyat.github.io/blog/weight-space-programming/)), and Alex Krentsel showed the skill only shows up

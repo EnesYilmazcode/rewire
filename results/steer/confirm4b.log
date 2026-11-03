@@ -1,0 +1,25 @@
+﻿base {'peak': 0.74, 'line': 0.207, 'sign': 0.7, 'vote': 0.44} line answers {3: 239, 4: 2, 6: 359}
+push    -8% steer    peak 0.720 line 0.235 sign 0.720 vote 0.450  line answers {0: 2, 1: 1, 3: 268, 4: 39, 6: 290}  158s
+push    -8% random0  peak 0.725 line 0.202 sign 0.730 vote 0.430  219s
+push    -8% random1  peak 0.725 line 0.208 sign 0.705 vote 0.445  280s
+push    -8% random2  peak 0.730 line 0.202 sign 0.705 vote 0.440  341s
+push    -8% random3  peak 0.740 line 0.203 sign 0.720 vote 0.450  402s
+push    -8% random4  peak 0.745 line 0.197 sign 0.700 vote 0.435  462s
+push   -16% steer    peak 0.710 line 0.263 sign 0.680 vote 0.480  line answers {0: 1, 1: 1, 3: 145, 4: 351, 6: 102}  523s
+push   -16% random0  peak 0.710 line 0.202 sign 0.745 vote 0.425  584s
+push   -16% random1  peak 0.720 line 0.208 sign 0.705 vote 0.455  645s
+push   -16% random2  peak 0.715 line 0.183 sign 0.705 vote 0.445  706s
+push   -16% random3  peak 0.755 line 0.200 sign 0.720 vote 0.460  766s
+push   -16% random4  peak 0.740 line 0.202 sign 0.705 vote 0.435  827s
+push   -24% steer    peak 0.695 line 0.128 sign 0.580 vote 0.470  line answers {1: 1, 3: 11, 4: 582, 6: 6}  888s
+push   -24% random0  peak 0.700 line 0.202 sign 0.740 vote 0.430  948s
+push   -24% random1  peak 0.720 line 0.210 sign 0.705 vote 0.460  1009s
+push   -24% random2  peak 0.720 line 0.180 sign 0.700 vote 0.450  1070s
+push   -24% random3  peak 0.765 line 0.203 sign 0.725 vote 0.465  1131s
+push   -24% random4  peak 0.730 line 0.200 sign 0.690 vote 0.435  1192s
+push   -32% steer    peak 0.690 line 0.112 sign 0.510 vote 0.470  line answers {1: 1, 4: 598, 6: 1}  1252s
+push   -32% random0  peak 0.695 line 0.212 sign 0.735 vote 0.430  1313s
+push   -32% random1  peak 0.730 line 0.210 sign 0.695 vote 0.455  1374s
+push   -32% random2  peak 0.715 line 0.177 sign 0.690 vote 0.445  1435s
+push   -32% random3  peak 0.755 line 0.205 sign 0.725 vote 0.480  1496s
+push   -32% random4  peak 0.735 line 0.197 sign 0.700 vote 0.440  1556s

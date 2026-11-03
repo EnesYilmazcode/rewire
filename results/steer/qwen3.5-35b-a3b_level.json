@@ -1,0 +1,751 @@
+{
+ "model": "Qwen/Qwen3.5-35B-A3B",
+ "train": 150,
+ "test": 150,
+ "baseline": {
+  "peak": {
+   "train_acc": 0.873,
+   "test_acc": 0.927,
+   "chance": 0.111
+  },
+  "line": {
+   "train_acc": 0.147,
+   "test_acc": 0.16,
+   "chance": 0.125
+  },
+  "sign": {
+   "train_acc": 0.58,
+   "test_acc": 0.6,
+   "chance": 0.5
+  },
+  "vote": {
+   "train_acc": 0.573,
+   "test_acc": 0.673,
+   "chance": 0.111
+  }
+ },
+ "base_test_mean": 0.59,
+ "sweep": [
+  {
+   "layer": 2,
+   "scale": -32.0,
+   "steer": {
+    "peak": 0.92,
+    "line": 0.147,
+    "sign": 0.593,
+    "vote": 0.667
+   },
+   "random": {
+    "peak": 0.92,
+    "line": 0.147,
+    "sign": 0.58,
+    "vote": 0.653
+   },
+   "steer_mean": 0.582,
+   "random_mean": 0.575
+  },
+  {
+   "layer": 2,
+   "scale": -16.0,
+   "steer": {
+    "peak": 0.907,
+    "line": 0.147,
+    "sign": 0.593,
+    "vote": 0.687
+   },
+   "random": {
+    "peak": 0.947,
+    "line": 0.153,
+    "sign": 0.587,
+    "vote": 0.687
+   },
+   "steer_mean": 0.584,
+   "random_mean": 0.593
+  },
+  {
+   "layer": 2,
+   "scale": 16.0,
+   "steer": {
+    "peak": 0.933,
+    "line": 0.167,
+    "sign": 0.6,
+    "vote": 0.673
+   },
+   "random": {
+    "peak": 0.92,
+    "line": 0.153,
+    "sign": 0.647,
+    "vote": 0.687
+   },
+   "steer_mean": 0.593,
+   "random_mean": 0.602
+  },
+  {
+   "layer": 2,
+   "scale": 32.0,
+   "steer": {
+    "peak": 0.927,
+    "line": 0.167,
+    "sign": 0.627,
+    "vote": 0.68
+   },
+   "random": {
+    "peak": 0.913,
+    "line": 0.153,
+    "sign": 0.62,
+    "vote": 0.673
+   },
+   "steer_mean": 0.6,
+   "random_mean": 0.59
+  },
+  {
+   "layer": 2,
+   "scale": 64.0,
+   "steer": {
+    "peak": 0.853,
+    "line": 0.173,
+    "sign": 0.62,
+    "vote": 0.68
+   },
+   "random": {
+    "peak": 0.86,
+    "line": 0.14,
+    "sign": 0.68,
+    "vote": 0.64
+   },
+   "steer_mean": 0.582,
+   "random_mean": 0.58
+  },
+  {
+   "layer": 7,
+   "scale": -32.0,
+   "steer": {
+    "peak": 0.907,
+    "line": 0.153,
+    "sign": 0.587,
+    "vote": 0.647
+   },
+   "random": {
+    "peak": 0.94,
+    "line": 0.16,
+    "sign": 0.613,
+    "vote": 0.687
+   },
+   "steer_mean": 0.574,
+   "random_mean": 0.6
+  },
+  {
+   "layer": 7,
+   "scale": -16.0,
+   "steer": {
+    "peak": 0.92,
+    "line": 0.153,
+    "sign": 0.62,
+    "vote": 0.68
+   },
+   "random": {
+    "peak": 0.953,
+    "line": 0.153,
+    "sign": 0.6,
+    "vote": 0.653
+   },
+   "steer_mean": 0.593,
+   "random_mean": 0.59
+  },
+  {
+   "layer": 7,
+   "scale": 16.0,
+   "steer": {
+    "peak": 0.927,
+    "line": 0.153,
+    "sign": 0.607,
+    "vote": 0.693
+   },
+   "random": {
+    "peak": 0.9,
+    "line": 0.16,
+    "sign": 0.607,
+    "vote": 0.68
+   },
+   "steer_mean": 0.595,
+   "random_mean": 0.587
+  },
+  {
+   "layer": 7,
+   "scale": 32.0,
+   "steer": {
+    "peak": 0.913,
+    "line": 0.147,
+    "sign": 0.62,
+    "vote": 0.667
+   },
+   "random": {
+    "peak": 0.873,
+    "line": 0.16,
+    "sign": 0.6,
+    "vote": 0.647
+   },
+   "steer_mean": 0.587,
+   "random_mean": 0.57
+  },
+  {
+   "layer": 7,
+   "scale": 64.0,
+   "steer": {
+    "peak": 0.873,
+    "line": 0.173,
+    "sign": 0.687,
+    "vote": 0.667
+   },
+   "random": {
+    "peak": 0.88,
+    "line": 0.2,
+    "sign": 0.587,
+    "vote": 0.553
+   },
+   "steer_mean": 0.6,
+   "random_mean": 0.555
+  },
+  {
+   "layer": 12,
+   "scale": -32.0,
+   "steer": {
+    "peak": 0.947,
+    "line": 0.14,
+    "sign": 0.627,
+    "vote": 0.687
+   },
+   "random": {
+    "peak": 0.96,
+    "line": 0.16,
+    "sign": 0.66,
+    "vote": 0.68
+   },
+   "steer_mean": 0.6,
+   "random_mean": 0.615
+  },
+  {
+   "layer": 12,
+   "scale": -16.0,
+   "steer": {
+    "peak": 0.947,
+    "line": 0.147,
+    "sign": 0.633,
+    "vote": 0.687
+   },
+   "random": {
+    "peak": 0.953,
+    "line": 0.147,
+    "sign": 0.613,
+    "vote": 0.687
+   },
+   "steer_mean": 0.603,
+   "random_mean": 0.6
+  },
+  {
+   "layer": 12,
+   "scale": 16.0,
+   "steer": {
+    "peak": 0.933,
+    "line": 0.167,
+    "sign": 0.607,
+    "vote": 0.68
+   },
+   "random": {
+    "peak": 0.893,
+    "line": 0.147,
+    "sign": 0.6,
+    "vote": 0.667
+   },
+   "steer_mean": 0.597,
+   "random_mean": 0.577
+  },
+  {
+   "layer": 12,
+   "scale": 32.0,
+   "steer": {
+    "peak": 0.907,
+    "line": 0.247,
+    "sign": 0.627,
+    "vote": 0.64
+   },
+   "random": {
+    "peak": 0.88,
+    "line": 0.153,
+    "sign": 0.62,
+    "vote": 0.647
+   },
+   "steer_mean": 0.605,
+   "random_mean": 0.575
+  },
+  {
+   "layer": 12,
+   "scale": 64.0,
+   "steer": {
+    "peak": 0.9,
+    "line": 0.173,
+    "sign": 0.66,
+    "vote": 0.553
+   },
+   "random": {
+    "peak": 0.82,
+    "line": 0.14,
+    "sign": 0.6,
+    "vote": 0.533
+   },
+   "steer_mean": 0.572,
+   "random_mean": 0.523
+  },
+  {
+   "layer": 17,
+   "scale": -32.0,
+   "steer": {
+    "peak": 0.933,
+    "line": 0.14,
+    "sign": 0.573,
+    "vote": 0.653
+   },
+   "random": {
+    "peak": 0.873,
+    "line": 0.14,
+    "sign": 0.627,
+    "vote": 0.693
+   },
+   "steer_mean": 0.575,
+   "random_mean": 0.583
+  },
+  {
+   "layer": 17,
+   "scale": -16.0,
+   "steer": {
+    "peak": 0.94,
+    "line": 0.147,
+    "sign": 0.593,
+    "vote": 0.667
+   },
+   "random": {
+    "peak": 0.907,
+    "line": 0.147,
+    "sign": 0.633,
+    "vote": 0.7
+   },
+   "steer_mean": 0.587,
+   "random_mean": 0.597
+  },
+  {
+   "layer": 17,
+   "scale": 16.0,
+   "steer": {
+    "peak": 0.9,
+    "line": 0.193,
+    "sign": 0.647,
+    "vote": 0.68
+   },
+   "random": {
+    "peak": 0.947,
+    "line": 0.167,
+    "sign": 0.587,
+    "vote": 0.667
+   },
+   "steer_mean": 0.605,
+   "random_mean": 0.592
+  },
+  {
+   "layer": 17,
+   "scale": 32.0,
+   "steer": {
+    "peak": 0.88,
+    "line": 0.213,
+    "sign": 0.7,
+    "vote": 0.68
+   },
+   "random": {
+    "peak": 0.933,
+    "line": 0.167,
+    "sign": 0.587,
+    "vote": 0.693
+   },
+   "steer_mean": 0.618,
+   "random_mean": 0.595
+  },
+  {
+   "layer": 17,
+   "scale": 64.0,
+   "steer": {
+    "peak": 0.793,
+    "line": 0.213,
+    "sign": 0.64,
+    "vote": 0.653
+   },
+   "random": {
+    "peak": 0.927,
+    "line": 0.153,
+    "sign": 0.587,
+    "vote": 0.653
+   },
+   "steer_mean": 0.575,
+   "random_mean": 0.58
+  },
+  {
+   "layer": 22,
+   "scale": -32.0,
+   "steer": {
+    "peak": 0.787,
+    "line": 0.14,
+    "sign": 0.58,
+    "vote": 0.46
+   },
+   "random": {
+    "peak": 0.927,
+    "line": 0.147,
+    "sign": 0.62,
+    "vote": 0.7
+   },
+   "steer_mean": 0.492,
+   "random_mean": 0.599
+  },
+  {
+   "layer": 22,
+   "scale": -16.0,
+   "steer": {
+    "peak": 0.913,
+    "line": 0.147,
+    "sign": 0.573,
+    "vote": 0.593
+   },
+   "random": {
+    "peak": 0.94,
+    "line": 0.147,
+    "sign": 0.613,
+    "vote": 0.693
+   },
+   "steer_mean": 0.556,
+   "random_mean": 0.598
+  },
+  {
+   "layer": 22,
+   "scale": 16.0,
+   "steer": {
+    "peak": 0.86,
+    "line": 0.167,
+    "sign": 0.653,
+    "vote": 0.673
+   },
+   "random": {
+    "peak": 0.92,
+    "line": 0.167,
+    "sign": 0.62,
+    "vote": 0.66
+   },
+   "steer_mean": 0.588,
+   "random_mean": 0.592
+  },
+  {
+   "layer": 22,
+   "scale": 32.0,
+   "steer": {
+    "peak": 0.8,
+    "line": 0.16,
+    "sign": 0.627,
+    "vote": 0.64
+   },
+   "random": {
+    "peak": 0.907,
+    "line": 0.173,
+    "sign": 0.627,
+    "vote": 0.667
+   },
+   "steer_mean": 0.557,
+   "random_mean": 0.594
+  },
+  {
+   "layer": 22,
+   "scale": 64.0,
+   "steer": {
+    "peak": 0.46,
+    "line": 0.193,
+    "sign": 0.567,
+    "vote": 0.233
+   },
+   "random": {
+    "peak": 0.76,
+    "line": 0.207,
+    "sign": 0.693,
+    "vote": 0.633
+   },
+   "steer_mean": 0.363,
+   "random_mean": 0.573
+  },
+  {
+   "layer": 27,
+   "scale": -32.0,
+   "steer": {
+    "peak": 0.8,
+    "line": 0.167,
+    "sign": 0.633,
+    "vote": 0.64
+   },
+   "random": {
+    "peak": 0.953,
+    "line": 0.16,
+    "sign": 0.587,
+    "vote": 0.687
+   },
+   "steer_mean": 0.56,
+   "random_mean": 0.597
+  },
+  {
+   "layer": 27,
+   "scale": -16.0,
+   "steer": {
+    "peak": 0.9,
+    "line": 0.153,
+    "sign": 0.653,
+    "vote": 0.667
+   },
+   "random": {
+    "peak": 0.947,
+    "line": 0.167,
+    "sign": 0.613,
+    "vote": 0.687
+   },
+   "steer_mean": 0.593,
+   "random_mean": 0.603
+  },
+  {
+   "layer": 27,
+   "scale": 16.0,
+   "steer": {
+    "peak": 0.893,
+    "line": 0.147,
+    "sign": 0.607,
+    "vote": 0.687
+   },
+   "random": {
+    "peak": 0.927,
+    "line": 0.147,
+    "sign": 0.613,
+    "vote": 0.68
+   },
+   "steer_mean": 0.584,
+   "random_mean": 0.592
+  },
+  {
+   "layer": 27,
+   "scale": 32.0,
+   "steer": {
+    "peak": 0.833,
+    "line": 0.147,
+    "sign": 0.58,
+    "vote": 0.68
+   },
+   "random": {
+    "peak": 0.907,
+    "line": 0.147,
+    "sign": 0.62,
+    "vote": 0.687
+   },
+   "steer_mean": 0.56,
+   "random_mean": 0.59
+  },
+  {
+   "layer": 27,
+   "scale": 64.0,
+   "steer": {
+    "peak": 0.7,
+    "line": 0.147,
+    "sign": 0.567,
+    "vote": 0.58
+   },
+   "random": {
+    "peak": 0.88,
+    "line": 0.147,
+    "sign": 0.647,
+    "vote": 0.667
+   },
+   "steer_mean": 0.498,
+   "random_mean": 0.585
+  },
+  {
+   "layer": 32,
+   "scale": -32.0,
+   "steer": {
+    "peak": 0.887,
+    "line": 0.187,
+    "sign": 0.613,
+    "vote": 0.627
+   },
+   "random": {
+    "peak": 0.94,
+    "line": 0.16,
+    "sign": 0.593,
+    "vote": 0.673
+   },
+   "steer_mean": 0.579,
+   "random_mean": 0.591
+  },
+  {
+   "layer": 32,
+   "scale": -16.0,
+   "steer": {
+    "peak": 0.92,
+    "line": 0.173,
+    "sign": 0.613,
+    "vote": 0.66
+   },
+   "random": {
+    "peak": 0.927,
+    "line": 0.167,
+    "sign": 0.6,
+    "vote": 0.68
+   },
+   "steer_mean": 0.592,
+   "random_mean": 0.594
+  },
+  {
+   "layer": 32,
+   "scale": 16.0,
+   "steer": {
+    "peak": 0.947,
+    "line": 0.153,
+    "sign": 0.613,
+    "vote": 0.68
+   },
+   "random": {
+    "peak": 0.927,
+    "line": 0.167,
+    "sign": 0.607,
+    "vote": 0.673
+   },
+   "steer_mean": 0.598,
+   "random_mean": 0.594
+  },
+  {
+   "layer": 32,
+   "scale": 32.0,
+   "steer": {
+    "peak": 0.907,
+    "line": 0.147,
+    "sign": 0.627,
+    "vote": 0.667
+   },
+   "random": {
+    "peak": 0.927,
+    "line": 0.167,
+    "sign": 0.653,
+    "vote": 0.687
+   },
+   "steer_mean": 0.587,
+   "random_mean": 0.609
+  },
+  {
+   "layer": 32,
+   "scale": 64.0,
+   "steer": {
+    "peak": 0.653,
+    "line": 0.153,
+    "sign": 0.6,
+    "vote": 0.62
+   },
+   "random": {
+    "peak": 0.927,
+    "line": 0.167,
+    "sign": 0.713,
+    "vote": 0.653
+   },
+   "steer_mean": 0.507,
+   "random_mean": 0.615
+  },
+  {
+   "layer": 37,
+   "scale": -32.0,
+   "steer": {
+    "peak": 0.9,
+    "line": 0.187,
+    "sign": 0.727,
+    "vote": 0.593
+   },
+   "random": {
+    "peak": 0.94,
+    "line": 0.173,
+    "sign": 0.6,
+    "vote": 0.687
+   },
+   "steer_mean": 0.602,
+   "random_mean": 0.6
+  },
+  {
+   "layer": 37,
+   "scale": -16.0,
+   "steer": {
+    "peak": 0.933,
+    "line": 0.253,
+    "sign": 0.667,
+    "vote": 0.647
+   },
+   "random": {
+    "peak": 0.927,
+    "line": 0.167,
+    "sign": 0.6,
+    "vote": 0.693
+   },
+   "steer_mean": 0.625,
+   "random_mean": 0.597
+  },
+  {
+   "layer": 37,
+   "scale": 16.0,
+   "steer": {
+    "peak": 0.933,
+    "line": 0.147,
+    "sign": 0.58,
+    "vote": 0.687
+   },
+   "random": {
+    "peak": 0.933,
+    "line": 0.147,
+    "sign": 0.627,
+    "vote": 0.693
+   },
+   "steer_mean": 0.587,
+   "random_mean": 0.6
+  },
+  {
+   "layer": 37,
+   "scale": 32.0,
+   "steer": {
+    "peak": 0.927,
+    "line": 0.147,
+    "sign": 0.587,
+    "vote": 0.64
+   },
+   "random": {
+    "peak": 0.933,
+    "line": 0.147,
+    "sign": 0.64,
+    "vote": 0.707
+   },
+   "steer_mean": 0.575,
+   "random_mean": 0.607
+  },
+  {
+   "layer": 37,
+   "scale": 64.0,
+   "steer": {
+    "peak": 0.78,
+    "line": 0.147,
+    "sign": 0.587,
+    "vote": 0.433
+   },
+   "random": {
+    "peak": 0.933,
+    "line": 0.147,
+    "sign": 0.673,
+    "vote": 0.687
+   },
+   "steer_mean": 0.487,
+   "random_mean": 0.61
+  }
+ ],
+ "mode": "level"
+}

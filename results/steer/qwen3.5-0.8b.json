@@ -1,0 +1,48 @@
+{
+ "model": "Qwen/Qwen3.5-0.8B",
+ "train": 40,
+ "test": 40,
+ "baseline": {
+  "peak": {
+   "train_acc": 0.075,
+   "test_acc": 0.125,
+   "chance": 0.111
+  },
+  "line": {
+   "train_acc": 0.2,
+   "test_acc": 0.125,
+   "chance": 0.125
+  },
+  "sign": {
+   "train_acc": 0.4,
+   "test_acc": 0.625,
+   "chance": 0.5
+  },
+  "vote": {
+   "train_acc": 0.225,
+   "test_acc": 0.2,
+   "chance": 0.111
+  }
+ },
+ "base_test_mean": 0.269,
+ "sweep": [
+  {
+   "layer": 12,
+   "scale": 4.0,
+   "steer": {
+    "peak": 0.125,
+    "line": 0.125,
+    "sign": 0.625,
+    "vote": 0.2
+   },
+   "random": {
+    "peak": 0.125,
+    "line": 0.125,
+    "sign": 0.625,
+    "vote": 0.275
+   },
+   "steer_mean": 0.269,
+   "random_mean": 0.287
+  }
+ ]
+}

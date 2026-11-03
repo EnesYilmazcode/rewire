@@ -1,0 +1,158 @@
+{
+ "model": "claude-cli/claude-fable-5-1",
+ "hidden": 32,
+ "decimals": 1,
+ "truth": [
+  [
+   -3.47,
+   4.02,
+   2.87,
+   3.58,
+   -17.39,
+   3.34,
+   4.67,
+   3.08,
+   2.85
+  ],
+  [
+   1.64,
+   1.48,
+   1.86,
+   1.91,
+   -16.2,
+   2.16,
+   2.44,
+   1.95,
+   11.36
+  ],
+  [
+   0.84,
+   5.75,
+   0.03,
+   0.35,
+   -12.5,
+   -0.68,
+   0.8,
+   9.04,
+   -1.24
+  ],
+  [
+   0.54,
+   1.09,
+   6.88,
+   3.65,
+   -14.9,
+   1.87,
+   5.58,
+   -0.18,
+   -0.23
+  ],
+  [
+   -0.52,
+   8.01,
+   1.15,
+   0.77,
+   -13.0,
+   -0.14,
+   0.97,
+   8.42,
+   0.65
+  ]
+ ],
+ "reply": "I'll work each input through the hidden layer (inputs are 0/1, so each hidden pre-activation is a sum of selected W1 columns plus the bias), apply ReLU, then take the weighted sum of the nonzero hidden units for the 9 outputs.\n\n**Hidden layer (after ReLU, nonzero units only)**\n\nInput 1 (active cols 0,13,19,20,21,23,24,25,26):\nh2=0.7, h3=2.1, h4=0.5, h5=0.5, h7=0.1, h8=0.1, h9=0.1, h10=0.6, h12=1.5, h13=0.4, h14=4.4, h15=0.2, h16=3.1, h17=0.9, h19=0.2, h23=2.4, h24=0.2, h25=6.2\n\nInput 2 (cols 0,4,10,17,20,21,23,24,25):\nh1=1.5, h2=3.6, h7=1.4, h8=0.3, h9=0.1, h11=1.6, h14=4.2, h15=0.8, h16=4.9, h22=1.4, h23=1.0, h25=3.7, h28=1.3, h31=2.1\n\nInput 3 (cols 1,4,12,16,18,20,23,24,26):\nh2=0.1, h7=2.8, h8=1.3, h9=1.7, h11=1.8, h12=2.5, h13=1.9, h14=4.9, h15=1.3, h16=5.0, h18=1.8, h19=0.4, h20=2.0, h21=0.1, h23=3.3, h24=1.3, h25=4.2, h26=2.4, h31=2.9\n\nInput 4 (cols 2,4,9,15,19,21,23,25,26):\nh0=2.0, h1=2.1, h7=0.8, h8=0.4, h11=0.7, h12=2.3, h14=3.1, h16=2.2, h18=1.0, h19=0.4, h20=1.7, h22=1.1, h23=2.7, h24=2.3, h25=0.5, h26=0.1, h28=1.1, h29=0.6, h31=4.9\n\nInput 5 (cols 1,4,9,11,16,21,23,24,26):\nh0=1.8, h3=0.2, h6=0.3, h7=1.5, h9=0.6, h11=1.6, h14=2.9, h16=5.0, h18=1.1, h19=0.6, h20=1.9, h21=2.3, h23=2.8, h24=1.3, h25=2.5, h26=1.8, h31=2.5\n\n**Output layer** (W2 @ h + b2, worked term by term for each row)\n\n| Input | s |\n|---|---|\n| 1 | -3.47, 4.02, 2.87, 3.58, -17.39, 3.34, 4.67, 3.08, 2.85 |\n| 2 | 1.64, 1.48, 1.86, 1.91, -16.20, 2.16, 2.44, 1.95, 11.36 |\n| 3 | 0.84, 5.75, 0.03, 0.35, -12.50, -0.68, 0.80, 9.04, -1.24 |\n| 4 | 0.54, 1.09, 6.88, 3.65, -14.90, 1.87, 5.58, -0.18, -0.23 |\n| 5 | -0.52, 8.01, 1.15, 0.77, -13.00, -0.14, 0.97, 8.42, 0.65 |\n\nAll sums were done in exact decimal arithmetic, so no rounding drift beyond the final 2-decimal display.\n\n{\"s\": [[-3.47, 4.02, 2.87, 3.58, -17.39, 3.34, 4.67, 3.08, 2.85], [1.64, 1.48, 1.86, 1.91, -16.20, 2.16, 2.44, 1.95, 11.36], [0.84, 5.75, 0.03, 0.35, -12.50, -0.68, 0.80, 9.04, -1.24], [0.54, 1.09, 6.88, 3.65, -14.90, 1.87, 5.58, -0.18, -0.23], [-0.52, 8.01, 1.15, 0.77, -13.00, -0.14, 0.97, 8.42, 0.65]]}",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 18030,
+  "cache_read_input_tokens": 10541,
+  "output_tokens": 54125,
+  "output_tokens_details": {
+   "thinking_tokens": 52692
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18030,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 54125,
+    "cache_read_input_tokens": 10541,
+    "cache_creation_input_tokens": 18030,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 18030
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "cost_usd_list_price": 3.0695052499999997,
+ "num_turns": 1,
+ "got": [
+  [
+   -3.47,
+   4.02,
+   2.87,
+   3.58,
+   -17.39,
+   3.34,
+   4.67,
+   3.08,
+   2.85
+  ],
+  [
+   1.64,
+   1.48,
+   1.86,
+   1.91,
+   -16.2,
+   2.16,
+   2.44,
+   1.95,
+   11.36
+  ],
+  [
+   0.84,
+   5.75,
+   0.03,
+   0.35,
+   -12.5,
+   -0.68,
+   0.8,
+   9.04,
+   -1.24
+  ],
+  [
+   0.54,
+   1.09,
+   6.88,
+   3.65,
+   -14.9,
+   1.87,
+   5.58,
+   -0.18,
+   -0.23
+  ],
+  [
+   -0.52,
+   8.01,
+   1.15,
+   0.77,
+   -13.0,
+   -0.14,
+   0.97,
+   8.42,
+   0.65
+  ]
+ ],
+ "within_0.1": 1.0,
+ "best_move_right": 1.0
+}

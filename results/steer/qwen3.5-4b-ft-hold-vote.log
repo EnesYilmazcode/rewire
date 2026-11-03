@@ -1,0 +1,44 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Current Triton version 3.2.0 is below the recommended 3.3.0 version. Errors may occur and these issues will not be fixed. Please consider upgrading Triton.
+Current Python version 3.10 is below the recommended 3.11 version. It is recommended to upgrade to Python 3.11 or higher for the best experience.
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files:  50%|█████     | 1/2 [00:33<00:33, 33.81s/it]Fetching 2 files: 100%|██████████| 2/2 [00:38<00:00, 16.73s/it]Fetching 2 files: 100%|██████████| 2/2 [00:38<00:00, 19.29s/it]
+Loading weights:   0%|          | 0/426 [00:00<?, ?it/s]Loading weights:   0%|          | 1/426 [00:00<01:43,  4.10it/s]Loading weights:   6%|▋         | 27/426 [00:00<00:04, 95.20it/s]Loading weights:  11%|█         | 47/426 [00:00<00:03, 125.80it/s]Loading weights:  18%|█▊        | 78/426 [00:00<00:01, 182.71it/s]Loading weights:  23%|██▎       | 100/426 [00:00<00:01, 174.18it/s]Loading weights:  31%|███       | 131/426 [00:00<00:01, 210.07it/s]Loading weights:  36%|███▌      | 154/426 [00:00<00:01, 195.48it/s]Loading weights:  43%|████▎     | 184/426 [00:01<00:01, 221.75it/s]Loading weights:  49%|████▉     | 208/426 [00:01<00:01, 206.48it/s]Loading weights:  55%|█████▌    | 236/426 [00:01<00:00, 223.95it/s]Loading weights:  61%|██████    | 260/426 [00:01<00:00, 208.26it/s]Loading weights:  68%|██████▊   | 290/426 [00:01<00:00, 230.75it/s]Loading weights:  74%|███████▎  | 314/426 [00:01<00:00, 212.13it/s]Loading weights:  81%|████████  | 343/426 [00:01<00:00, 230.03it/s]Loading weights:  86%|████████▌ | 367/426 [00:01<00:00, 212.27it/s]Loading weights:  93%|█████████▎| 395/426 [00:02<00:00, 228.33it/s]Loading weights:  98%|█████████▊| 419/426 [00:02<00:00, 211.52it/s]Loading weights: 100%|██████████| 426/426 [00:02<00:00, 197.35it/s]
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+before {'peak': 0.723, 'line': 0.187, 'sign': 0.637, 'vote': 0.497} 0.511 134s
+trainable params: 18,087,936 || all params: 4,223,839,232 || trainable%: 0.4282
+epoch 0 loss 0.283  371s
+epoch 1 loss 0.527  482s
+after {'peak': 0.903, 'line': 0.963, 'sign': 0.673, 'vote': 0.283} 0.706
+only layer  0: 0.574 {'peak': 0.833, 'line': 0.377, 'sign': 0.537, 'vote': 0.55}  530s
+only layer  1: 0.667 {'peak': 0.873, 'line': 0.583, 'sign': 0.68, 'vote': 0.533}  554s
+only layer  2: 0.670 {'peak': 0.887, 'line': 0.55, 'sign': 0.687, 'vote': 0.557}  578s
+only layer  3: 0.694 {'peak': 0.923, 'line': 0.633, 'sign': 0.67, 'vote': 0.55}  602s
+only layer  4: 0.746 {'peak': 0.97, 'line': 0.823, 'sign': 0.613, 'vote': 0.577}  626s
+only layer  5: 0.760 {'peak': 0.963, 'line': 0.91, 'sign': 0.61, 'vote': 0.557}  650s
+only layer  6: 0.784 {'peak': 0.987, 'line': 0.863, 'sign': 0.67, 'vote': 0.617}  673s
+only layer  7: 0.748 {'peak': 0.973, 'line': 0.767, 'sign': 0.67, 'vote': 0.58}  697s
+only layer  8: 0.743 {'peak': 0.92, 'line': 0.697, 'sign': 0.78, 'vote': 0.573}  721s
+only layer  9: 0.782 {'peak': 0.947, 'line': 0.753, 'sign': 0.84, 'vote': 0.587}  745s
+only layer 10: 0.675 {'peak': 0.8, 'line': 0.72, 'sign': 0.597, 'vote': 0.583}  769s
+only layer 11: 0.629 {'peak': 0.767, 'line': 0.517, 'sign': 0.603, 'vote': 0.627}  793s
+only layer 12: 0.646 {'peak': 0.773, 'line': 0.59, 'sign': 0.64, 'vote': 0.58}  817s
+only layer 13: 0.599 {'peak': 0.77, 'line': 0.433, 'sign': 0.67, 'vote': 0.523}  841s
+only layer 14: 0.569 {'peak': 0.753, 'line': 0.317, 'sign': 0.677, 'vote': 0.53}  865s
+only layer 15: 0.518 {'peak': 0.737, 'line': 0.183, 'sign': 0.63, 'vote': 0.523}  889s
+only layer 16: 0.488 {'peak': 0.55, 'line': 0.167, 'sign': 0.69, 'vote': 0.543}  913s
+only layer 17: 0.522 {'peak': 0.657, 'line': 0.223, 'sign': 0.703, 'vote': 0.507}  937s
+only layer 18: 0.521 {'peak': 0.7, 'line': 0.187, 'sign': 0.687, 'vote': 0.51}  961s
+only layer 19: 0.515 {'peak': 0.687, 'line': 0.187, 'sign': 0.647, 'vote': 0.54}  985s
+only layer 20: 0.485 {'peak': 0.58, 'line': 0.173, 'sign': 0.69, 'vote': 0.497}  1009s
+only layer 21: 0.512 {'peak': 0.673, 'line': 0.197, 'sign': 0.677, 'vote': 0.5}  1033s
+only layer 22: 0.503 {'peak': 0.683, 'line': 0.19, 'sign': 0.64, 'vote': 0.5}  1057s
+only layer 23: 0.497 {'peak': 0.697, 'line': 0.153, 'sign': 0.65, 'vote': 0.487}  1081s
+only layer 24: 0.509 {'peak': 0.71, 'line': 0.183, 'sign': 0.643, 'vote': 0.5}  1105s
+only layer 25: 0.506 {'peak': 0.697, 'line': 0.193, 'sign': 0.64, 'vote': 0.493}  1129s
+only layer 26: 0.505 {'peak': 0.7, 'line': 0.137, 'sign': 0.693, 'vote': 0.49}  1153s
+only layer 27: 0.494 {'peak': 0.713, 'line': 0.147, 'sign': 0.623, 'vote': 0.493}  1177s
+only layer 28: 0.501 {'peak': 0.723, 'line': 0.13, 'sign': 0.653, 'vote': 0.497}  1200s
+only layer 29: 0.481 {'peak': 0.733, 'line': 0.133, 'sign': 0.563, 'vote': 0.497}  1224s
+only layer 30: 0.492 {'peak': 0.737, 'line': 0.137, 'sign': 0.583, 'vote': 0.513}  1248s
+only layer 31: 0.518 {'peak': 0.737, 'line': 0.167, 'sign': 0.64, 'vote': 0.527}  1272s
+done 1275s

@@ -1,0 +1,37 @@
+{
+ "qwen3.5-9b": {
+  "region": "us-central1",
+  "id": "4288744687252013056",
+  "model": "Qwen/Qwen3.5-9B"
+ },
+ "qwen3.5-27b": {
+  "region": "europe-west4",
+  "id": "7314346141359800320",
+  "model": "Qwen/Qwen3.5-27B"
+ },
+ "qwen3.5-35b-a3b": {
+  "region": "asia-southeast1",
+  "id": "3893961936332652544",
+  "model": "Qwen/Qwen3.5-35B-A3B"
+ },
+ "qwen3.5-9b-confirm": {
+  "region": "us-central1",
+  "id": "7563143091327074304",
+  "model": "Qwen/Qwen3.5-9B"
+ },
+ "qwen3.5-4b-ft-all": {
+  "region": "europe-west4",
+  "id": "583716498254594048",
+  "model": "Qwen/Qwen3.5-4B"
+ },
+ "qwen3.5-4b-ft-hold-line": {
+  "region": "europe-west4",
+  "id": "5050161428699283456",
+  "model": "Qwen/Qwen3.5-4B"
+ },
+ "qwen3.5-4b-ft-hold-vote": {
+  "region": "asia-southeast1",
+  "id": "6279743838932172800",
+  "model": "Qwen/Qwen3.5-4B"
+ }
+}
